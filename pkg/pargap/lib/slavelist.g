@@ -5,13 +5,13 @@
 ##
 ##  Slave Listener definitions.
 ##
-#H  @(#)$Id: slavelist.g,v 1.10 2001/11/17 12:17:04 gap Exp $
+#H  @(#)$Id$
 ##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
 Revision.pargap_slavelist_g :=
-    "@(#)$Id: slavelist.g,v 1.10 2001/11/17 12:17:04 gap Exp $";
+    "@(#)$Id$";
 
 #Requires:  streams.c:LastReadValue
 
@@ -98,9 +98,6 @@ Revision.pargap_slavelist_g :=
 # Test send and receive between slaves before getting serious
 # Also, slave will try to change current directory to match master.
 
-#Does this work in GAP-4.1?  Anyway, we check this in lib/init.g now.
-# if not IsBound(MPI_Initialized) then quit;
-
 # The gapmpi.c kernel function, UNIX_MakeString can be used instead.
 MakeString := function( len )
   local i, x;
@@ -138,8 +135,10 @@ else
   hostname := [];
   pid := [];
   if MPI_Comm_rank() <> 0 then
-    Print("\nSlave ", MPI_Comm_rank(), " (", UNIX_Hostname(),
-          ") reporting.\n\n");
+    if not GAPInfo.CommandLineOptions.q then
+      Print("\nSlave ", MPI_Comm_rank(), " (", UNIX_Hostname(),
+            ") reporting.\n\n");
+    fi;
     MPI_Send( UNIX_Hostname(), 0 );
     MPI_Send( String(UNIX_Getpid()), 0 );
     MPI_Probe();
@@ -152,10 +151,14 @@ else
       Print( "  Using home directory.\n\n" );
     fi;
   else
-    Print("\nMaster here.  Will try to reach slaves.\n\n");
+    if not GAPInfo.CommandLineOptions.q then
+      Print("\nMaster here.  Will try to reach slaves.\n\n");
+    fi;
     for slave in [1..MPI_Comm_size() - 1] do
        MPI_Probe();
-       Print( "\nReceiving from slave ", MPI_Get_source(), "\n\n");
+       if not GAPInfo.CommandLineOptions.q then
+         Print( "\nReceiving from slave ", MPI_Get_source(), "\n\n");
+       fi;
        hostname[ MPI_Get_source() ] :=
          MPI_Recv( UNIX_MakeString( MPI_Get_count() ), MPI_Get_source() );
        MPI_Probe( MPI_Get_source() );
@@ -236,21 +239,6 @@ ReadEvalPrint := function(command)
   result := ReadEvalFromString( command );
   return PrintToString( result );
 end;
-
-# if not IsBound( DeclareGlobalFunction ) then
-#   DeclareGlobalFunction := "NOT_DEFINED";
-# fi;
-# MyDeclareGlobalFunction := function( strname )
-#   if DeclareGlobalFunction <> "NOT_DEFINED" then  # if GAP-4.x ...
-#     # What is the GAP 4.x way to declare functions, use them, and then define
-#     # ReadEvalFromString( PrintToString( "DeclareGlobalFunction(\"",
-#     #				       strname, "\");" ) );
-#     ReadEvalFromString( PrintToString( strname, " := ReturnTrue;" ) );
-#   else                    # else GAP-4 beta 3
-#     ReadEvalFromString( PrintToString( strname, " := NewOperationArgs(\"",
-# 				       strname, "\");" ) );
-#   fi;
-# end;
 
 #Declare it now for InterruptSlave()
 DeclareGlobalFunction("RecvStringMsg");
@@ -368,24 +356,29 @@ DeclareGlobalFunction("FlushAllMsgs");
 
 ParReset := function()
   local count, slave;
-  count := FlushAllMsgs();
-  for slave in [1..MPI_Comm_size()-1] do
-    SendMsg( false, slave, PING_TAG );
-  od;
-  Print("... resetting ...\n");
-  for slave in [1..10000000] do od;  # timing loop
-  # This assumes there's time for slave to reply before we probe.
-  for slave in [1..MPI_Comm_size()-1] do
-    if MPI_Iprobe(slave) then
-      RecvStringMsg(slave);  # don't evaluate, just throw away
-    else
-      InterruptSlave( slave );
-    fi;
-  od;
-  # PARANOID:  clean up just in case.
-  FlushAllMsgs();
-  PingSlave( -1 );  # -1 means all slaves
-  return count;
+  if MPI_USE_MPINU then
+    count := FlushAllMsgs();
+    for slave in [1..MPI_Comm_size()-1] do
+      SendMsg( false, slave, PING_TAG );
+    od;
+    Print("... resetting ...\n");
+    for slave in [1..10000000] do od;  # timing loop
+    # This assumes there's time for slave to reply before we probe.
+    for slave in [1..MPI_Comm_size()-1] do
+      if MPI_Iprobe(slave) then
+        RecvStringMsg(slave);  # don't evaluate, just throw away
+      else
+        InterruptSlave( slave );
+      fi;
+    od;
+    # PARANOID:  clean up just in case.
+    FlushAllMsgs();
+    PingSlave( -1 );  # -1 means all slaves
+    return count;
+  else
+    Error("ParReset() is unavailable when using a system MPI library.");
+  fi;
+  return 0;
 end;
 
 # A more sophisticated version of this would "rsh" a remote process
@@ -393,16 +386,20 @@ end;
 # This also returns how many messages were flushed.
 InstallGlobalFunction( FlushAllMsgs, function()
   local count, slave;
-  # Do this first, in case a slave is stuck in MasterSlave mode.
-  for slave in [1..MPI_Comm_size()-1] do
-        SendMsg( false, slave, MASTER_SLAVE_QUIT_TAG );
-  od;
-  count := 0;
-  while MPI_Iprobe() do
-    RecvStringMsg();  # don't evaluate, just throw away
-    count := count + 1;
-  od;
-  return count;
+  if MPI_USE_MPINU then
+    # Do this first, in case a slave is stuck in MasterSlave mode.
+    for slave in [1..MPI_Comm_size()-1] do
+          SendMsg( false, slave, MASTER_SLAVE_QUIT_TAG );
+    od;
+    count := 0;
+    while MPI_Iprobe() do
+      RecvStringMsg();  # don't evaluate, just throw away
+      count := count + 1;
+    od;
+    return count;
+  else
+    Error("FlushAllMsgs is not guaranteed to work with system MPI library.");
+  fi;
 end);
 
 InstallGlobalFunction( PingSlave, function( dest )
@@ -576,7 +573,9 @@ CloseSlaveListener := function ()
   local dest;
   if not MPI_Initialized() then return; fi;
   if MPI_Comm_rank() <> 0 then MPI_Finalize(); return; fi;
-  ParReset(); # slave should still be alive for this.  QUIT_TAG is later.
+  if MPI_USE_MPINU then
+    ParReset(); # slave should still be alive for this.  QUIT_TAG is later.
+  fi;
   for dest in [1..MPI_Comm_size() - 1] do
     # paranoia:  ParReset() should already have taken us out of MasterSlave.
     SendMsg( false, dest, MASTER_SLAVE_QUIT_TAG ); # in case in MasterSlave
@@ -589,20 +588,5 @@ InstallAtExit( CloseSlaveListener );
 
 #=============================================================================
 
-# This is now done in .../pkg/gapmpi/read.g
-# if not IsBound( MasterSlave ) then
-#   ReadPkg("gapmpi","lib/masslave.g");
-# fi;
-# 
-# if MPI_Comm_rank() <> 0 then
-#   # Call SlaveListener(), and repeat if we catch SIGINT (if we return fail)
-#   while fail = UNIX_Catch( SlaveListener, [] ) do
-#     # GAP 4b3 wants a non-empty, non-trivial body.
-#     # This statement should have no effect, and it can go away in GAP 4.x
-#     for i in [1..100] do i := i; od;
-#   od;
-# fi;
-
-# quit;
 
 #E  slavelist.g . . . . . . . . . . . . . . . . . . . . . . . . . . ends here

@@ -2,7 +2,7 @@
 **
 *W  gapmpi.c            GAP source - ParGAP/MPI hooks          Gene Cooperman
 **
-*H  @(#)$Id: gapmpi.c,v 1.7 2001/07/12 15:03:13 gap Exp $
+*H  @(#)$Id$
 **
 *Y  Copyright (C) 1999-2001  Gene Cooperman
 *Y    See included file, COPYING, for conditions for copying
@@ -16,6 +16,9 @@
 /***** core GAP includes *****/
 
 #include        <assert.h>              /* assert                          */
+#include        <time.h>                /* time                            */
+#include	<stdlib.h>		/* exit				   */
+#include	<stdio.h>		/* NULL, fprintf		   */
 #include        "system.h"              /* system dependent part           */
 
 const char * Revision_gapmpi_c =
@@ -44,20 +47,6 @@ const char * Revision_gapmpi_c =
 #include        "code.h"                /* coder                           */
 #include        "vars.h"                /* variables                       */
 #include        "stats.h"               /* statements (XXX_BRK_CURR_STAT)  */
-
-#ifndef SIZEBAG_STRINGLEN
-#define PRE_GAP_4_3  1
-/* For backward compatibility with GAP 4.2 and 4.1;
- * Delete this for GAP 4.4 and beyond, since there is a danger
- * of re-defining if SIZEBAG_STRINGLEN will no longer be a macro.
- * 
- * NOTE:  GAP 4.2 and earlier didn't keep a special field for the string length.
- * It just used the size of the bag.
- * Hence GET_LEN_STRING was the SIZE_BAG and SET_LEN_STRING didn't exist.
- */
-/* This SIZEBAG is overkill for GAP 4.2 and earlier, but it doesn't hurt. */
-#define SIZEBAG_STRINGLEN(len)         ((len) + 1 + sizeof(UInt))
-#endif
 
 #define INCLUDE_DECLARATION_PART
 # include       "gapmpi.h"               /* MPI functions and UNIX utils   */
@@ -157,8 +146,6 @@ Obj UNIX_Hostname( Obj self )
     sprintf( buf, "<unknown name>"); }
   host = NEW_STRING( SyStrlen(buf) ); /* NEW_STRING() allows for extra '\0' */
   SyStrncat( CSTR_STRING(host), buf, SyStrlen(buf) );
-  /* fix the length of <host>; see streams.c:FuncREAD_LINE_FILE()           */
-  /* GAP 4.2:  ResizeBag( host, SyStrlen( CSTR_STRING(host) ) + 1 ); */
   return host;
 }
 
@@ -322,7 +309,7 @@ SYS_SIG_T ParGAPAnswerIntr( int signr ) {
    In this case, the slave wouldn't need to set BreakOnError = 0
 */
 Obj UNIX_Catch( Obj self, Obj fnc, Obj arg2 )
-{ Obj result = Fail;
+{ Obj result; /* gcc -Wall complains if result is initialized to Fail here */
   Bag currLVars = CurrLVars;
   jmp_buf readJmpError;
   SYS_SIG_T (*savedSignal)(int);
@@ -330,6 +317,7 @@ Obj UNIX_Catch( Obj self, Obj fnc, Obj arg2 )
 
   REM_BRK_CURR_STAT();
 
+  result = Fail;
   if ( ! MPI_READ_ERROR() )
     result = FuncCALL_FUNC_LIST( 0L, fnc, arg2 );
   else {
@@ -348,6 +336,8 @@ Obj UNIX_Catch( Obj self, Obj fnc, Obj arg2 )
 /* Raise a SIGINT, that should be caught by UNIX_Catch() */
 Obj UNIX_Throw( Obj self ) {
   kill( getpid(), SIGINT );
+  /* NOTREACHED */
+  return self;
 }
 
 /*====================================================================
@@ -355,11 +345,10 @@ Obj UNIX_Throw( Obj self ) {
  * These will either disappear, or move to next section:  MPI functions
  */
   
-#define UNINITIALIZED -1 /* must be distinct from all MPI datatypes */
+#define UNINITIALIZED ((MPI_Datatype)-1) /* must be distinct from all MPI datatypes */
 
 static MPI_Status last_status;
 static MPI_Datatype last_datatype = UNINITIALIZED; /* needed for MPIget_count */
-static MPI_Datatype MPI_type[3];
 
 MPI_Datatype MPIdatatype_infer(Obj object)
 { if ( IS_STRING(object) ) return MPI_CHAR;
@@ -449,10 +438,8 @@ Obj MPIerror_string( Obj self, Obj errorcode )
   MPI_Error_string( INT_INTOBJ(errorcode),
 		    (char*)CSTR_STRING(str), &resultlen);
   ((char*)CSTR_STRING(str))[resultlen] = '\0';
-#ifndef PRE_GAP_4_3
   SET_LEN_STRING(str, resultlen);
   ResizeBag( str, SIZEBAG_STRINGLEN( GET_LEN_STRING(str) ) );
-#endif
   return str;
 }
 
@@ -495,7 +482,7 @@ Obj MPIsend( Obj self, Obj args )
   tag = ( LEN_LIST(args) > 2 ? ELM_LIST( args, 3 ) : 0 );
   ConvString( buf );
   MPI_Send( ((char*)CSTR_STRING(buf)),
-	    SyStrlen((unsigned char*)CSTR_STRING(buf)), /* don't incl. \0 */
+	    SyStrlen((const Char*)CSTR_STRING(buf)), /* don't incl. \0 */
 	    MPIdatatype_infer(buf), INT_INTOBJ(dest), INT_INTOBJ(tag),
 	    MPI_COMM_WORLD);
   return 0;
@@ -520,13 +507,10 @@ Obj MPIrecv( Obj self, Obj args )
              INT_INTOBJ(source), INT_INTOBJ(tag), MPI_COMM_WORLD, &last_status);
   MPI_READ_DONE();
   if ( ! IS_STRING( buf ) )
-{ /* CLEAN THIS UP LATER */
-      ErrorQuit("ParGAP: panic: MPI_Recv():  result buffer is not a string",
-		0L, 0L);
-exit(1);
-}
-  /* fix the length of <buf>; see streams.c:FuncREAD_LINE_FILE()           */
-  /* GAP 4.2: ResizeBag( buf, SyStrlen( CSTR_STRING(buf) ) + 1 ); */
+  { /* CLEAN THIS UP LATER */
+    ErrorQuit("ParGAP: panic: MPI_Recv():  result buffer is not a string", 0L, 0L);
+    exit(1);
+  }
 #if 0
   settimer("autologout");
 #endif
@@ -578,7 +562,7 @@ Obj MPIiprobe( Obj self, Obj args )
  */
 
 /* called _before_ GAP system initialization to remove command lines, etc. */
-void InitPargapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr )
+void InitPargapmpi( int * argc_ptr, char *** argv_ptr )
 { char * cmd = (*argv_ptr)[0], * tmp;
 
   /* Unless this binary is called as .../pargapmpi, we return immediately;
@@ -593,12 +577,15 @@ void InitPargapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr )
     fputs("ParGAP:  panic:  couldn't initialize MPI.\n", stderr);
     SyExit(1);
   }
+
   UNIX_Realtime( (Obj)0 ); /* initialize UNIX_Realtime:time_since_start */
   { if ( INT_INTOBJ( MPIcomm_size( (Obj)0 ) ) <= 1 )
+#ifdef USE_MPINU  
       printf("\nWARNING:  No slave processes; check procgroup file?\n\n");
+#else 
+      printf("\nWARNING:  No slave processes; did you not start ParGAP with an MPI launcher?\n\n");
+#endif
     if ( INT_INTOBJ(MPIcomm_rank((Obj)0)) > 0 ) {
-      *BreakOnError_ptr = 0; /* Errors should return to GAP top level */
-      SyBanner = ! SyBanner;
       SyQuiet = ! SyQuiet;
       { sigset_t fullset;
 	sigfillset( &fullset );
@@ -612,8 +599,8 @@ void InitPargapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr )
   }
 }
 /* For backward compatibility */
-void InitGapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr ) {
-  InitPargapmpi( argc_ptr, argv_ptr, BreakOnError_ptr );
+void InitGapmpi( int * argc_ptr, char *** argv_ptr ) {
+  InitPargapmpi( argc_ptr, argv_ptr );
 }
 
 /* called after MPI_Init() and after GAP system initialization */
@@ -631,6 +618,17 @@ void Init_MPIvars( void ) {
   AssGVar( gvar = GVarName("MPI_ANY_SOURCE"), INTOBJ_INT(MPI_ANY_SOURCE) );
   MakeReadOnlyGVar(gvar);
   AssGVar( gvar = GVarName("MPI_ANY_TAG"), INTOBJ_INT(MPI_ANY_TAG) );
+  MakeReadOnlyGVar(gvar);
+#ifdef USE_MPINU
+  AssGVar( gvar = GVarName("MPI_USE_MPINU"), True );
+  #ifdef MPINU_V2
+    AssGVar( gvar = GVarName("MPI_USE_MPINU_V2"), True );
+  #else
+    AssGVar( gvar = GVarName("MPI_USE_MPINU_V2"), False );
+  #endif
+#else
+  AssGVar( gvar = GVarName("MPI_USE_MPINU"), False );
+#endif
   MakeReadOnlyGVar(gvar);
 }
 

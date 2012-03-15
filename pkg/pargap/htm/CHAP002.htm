@@ -18,23 +18,27 @@ This means that the slave is running a simple program:
   (4) Goto step 1
 </pre>
 <p>
-An example using this interactive style is contained in section&nbsp;<a href="CHAP001.htm#SECT004">Extended Example</a>.
+An example using this interactive style is contained in section&nbsp;<a href="CHAP001.htm#SECT005">Extended Example</a>.
 <p>
-Some enhancements to this simple model should also be  noted.  The  reply
-message from the slave will wait in a  queue  until  the  master  process
-decides to read it. If unwanted messages accumulate  in  the  queue,  the
-master can execute  <code>FlushAllMsgs()</code>  (see&nbsp;<a href="CHAP002.htm#SSEC001.8">FlushAllMsgs</a>).  If  a  slave
+There are some enhancements to this model which should be noted. If  a  slave
 process prints to the standard  output,  this  will  be  visible  at  the
 console of the master process. If a slave process executes an <code>Error</code> and
 goes into a break loop, then it will  automatically  return  to  the  top
 level, return any error message to  the  master  process,  and  wait  for
-another message from the master process. If a slave process goes into  an
+another message from the master process. In addition, when using <font face="Gill Sans,Helvetica,Arial">ParGAP</font> 
+with the MPINU library, 
+<p>
+there are some enhancements
+to this model which should also be  noted.  Normally, all reply
+messages from a slave will wait in a  queue  until  the  master  process
+decides to read them. If unwanted messages accumulate  in  the  queue,  the
+master can execute  <code>FlushAllMsgs()</code>  (see&nbsp;<a href="CHAP002.htm#SSEC001.8">FlushAllMsgs</a>).  If a slave process goes into  an
 infinite loop, the master process can call <code>ParReset();</code> (see&nbsp;<a href="CHAP002.htm#SSEC001.16">ParReset</a>)
 to interrupt all slave processes and return them to their top level  loop
 as a slave listener.
 <p>
 At this point, you may wish to review the commands by  looking  again  at
-the extended example in section&nbsp;<a href="CHAP001.htm#SECT004">Extended Example</a>. Note also some naming
+the extended example in section&nbsp;<a href="CHAP001.htm#SECT005">Extended Example</a>. Note also some naming
 conventions:
 <p>
 <p>
@@ -62,7 +66,7 @@ functions.
 </dl>
 <p>
 <p>
-<a name="SECT001"><h2>2.1 Slave Listener Commands</h2></a>
+<h2><a name="SECT001">2.1 Slave Listener Commands</a></h2>
 <p><p>
 The  slave  listener  commands  are  implementd   in   <code>slavelist.g</code>   in
 <font face="Gill Sans,Helvetica,Arial">ParGAP</font>'s <code>lib</code> directory. Most procedures are short, and can  also  be
@@ -72,7 +76,7 @@ prompt). The  code  of  <code>SlaveListener</code>  and  <code>CloseSlaveListene
 <code>Print(SlaveListener, "\n");</code> and  <code>Print(CloseSlaveListener,  "\n");</code>)
 is also instructive and should provide some insights into the behavior of
 the slave listener. Examples of slave listener commands can be  found  in
-context in the section&nbsp;<a href="CHAP001.htm#SECT004">Extended Example</a>. Some  of  these  commands  are
+context in the section&nbsp;<a href="CHAP001.htm#SECT005">Extended Example</a>. Some  of  these  commands  are
 based on MPI. Further information on basic concepts of MPI can  be  found
 in section&nbsp;<a href="CHAP007.htm#SECT001">Tutorial introduction to the MPI C library</a>, but that section
 can be safely ignored on a first reading.
@@ -157,7 +161,8 @@ flushes all messages that are waiting to  be  received  and  returns  the
 number of messages flushed. (If  there  are  no  waiting  messages  0  is
 returned.) It is essentially equivalent to executing <code>RecvMsg();;</code>  until
 there are no more messages waiting to be received (see&nbsp;<a href="CHAP002.htm#SSEC001.2">RecvMsg</a>), except
-that it also returns the number of messages flushed.
+that it also returns the number of messages flushed. 
+<strong>This function is only available if <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is built using MPINU</strong>
 <p>
 <a name = "SSEC001.9"></a>
 <li><code>PingSlave( </code><var>dest</var><code> ) F</code>
@@ -187,7 +192,7 @@ the master.)
 <li><code>ParReread( </code><var>filename</var><code> ) F</code>
 <p>
 are parallel analogues of  the  <font face="Gill Sans,Helvetica,Arial">GAP</font>  <code>Read</code>  and  <code>Reread</code>  functions,
-respectively (see&nbsp;<a href="../../../doc/htm/ref/CHAP009.htm#SSEC007.1">Read</a> and&nbsp;<a href="../../../doc/htm/ref/CHAP009.htm#SSEC007.13">Reread</a> in the  Reference  Manual).
+respectively (see&nbsp;<a href="../../../doc/ref/chap10.html#s7ss1">Read</a> and&nbsp;<a href="../../../doc/ref/chap10.html#s7ss9">Reread</a> in the  Reference  Manual).
 <code>ParRead</code> (resp. <code>ParReread</code>) executes <code>Read</code>  (resp.  <code>Reread</code>)  on  all
 processes. Note that it  is  redundant  (and  often  incorrect)  to  call
 <code>ParRead</code> on a file that itself contains <code>Par...</code> functions.  One  should
@@ -227,7 +232,8 @@ Exactly like <code>ProbeMsg</code>, but non-blocking. It  returns  immediately  
 <li><code>ParReset() F</code>
 <p>
 flushes all pending messages from slaves, resets the  slaves,  pings  the
-slaves and returns the number of messages flushed.
+slaves and returns the number of messages flushed. 
+<strong>This function is only available if <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is built using MPINU</strong>
 <p>
 <a name = "SSEC001.17"></a>
 <li><code>ParBindGlobal( </code><var>gvar</var><code>, </code><var>value</var><code> ) F</code>
@@ -279,5 +285,5 @@ then you should read Chapter&nbsp;<a href="CHAP007.htm">MPI  commands  and  UNIX
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP001.htm">Previous</a>] [<a href ="CHAP003.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>November 2001
+<address>ParGAP manual<br>July 2011
 </address></body></html>

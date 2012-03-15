@@ -3,65 +3,36 @@
 #W  init.g                     ParGAP Package                  Gene Cooperman
 #W                                                                Greg Gamble
 ##
-#H  @(#)$Id: init.g,v 1.7 2001/11/16 15:35:19 gap Exp $
+#H  @(#)$Id$
 ##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
 
 
-## MPI_Initialized() is defined only if the ParGAP kernel was built _and_ 
-## if the binary was invoked as pargap (symbolic link to gap).
-
-if not IsBound(StringFile) then
-  # backward compatibility
-  if not IsBound(Chomp) then
-    Chomp := function(str)
-               if IsString(str) and str <> "" and str[Length(str)] = '\n' then
-                 return str{[1..Length(str) - 1]};
-               fi;
-               return str;
-             end;
-  fi;
-  StringFile := function(filename)
-                  local stream, string;
-                  stream := InputTextFile(filename);
-                  string := ReadAll(stream);
-                  CloseStream(stream);
-                  return string;
-                end;
-fi;
-
-if IsBoundGlobal("MPI_Initialized") then
-  # GAP must have been invoked as pargapmpi
-  DeclareAutoPackage("pargap", 
-    Chomp(StringFile(
-              Filename(DirectoriesPackageLibrary("pargap",""), "VERSION"))),
-    function()
-      # SendMsg is defined in lib/slavelist.g
-      return ARCH_IS_UNIX() and not IsBoundGlobal("SendMsg");
-    end
-    );
-else
-  # GAP must have been invoked as gap
-  DeclarePackage("pargap",
-    Chomp(StringFile(
-              Filename(DirectoriesPackageLibrary("pargap",""), "VERSION"))),
-    function()
-      Info(InfoWarning, 1,
-           "``ParGAP'' should be invoked by the script ",
-           "generated during installation.");
-      Info(InfoWarning, 1,
-           "Type `?Running ParGAP' for more details.");
-      return false;
-    end
-    );
-fi;
-
-DeclarePackageAutoDocumentation( "pargap", "doc" );
-
-if not QUIET and BANNER then
-  ReadPkg("pargap", "lib/banner.g");
-fi;
-
 #E init.g . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ends here
+
+# Print the banner if I am the master
+if MPI_Comm_rank() = 0 and 
+  not ( GAPInfo.CommandLineOptions.q or
+        GAPInfo.CommandLineOptions.b ) then
+  if GAPInfo.TermEncoding = "UTF-8" then
+    btop := "┌────────┐\c"; vert := "│"; bbot := "└────────┘\c";
+  else
+    btop := "**********"; vert := "*"; bbot := btop;
+  fi;
+  Print( "\n" );
+  Print( " ",btop,"   Parallel GAP, Version ", 
+         InstalledPackageVersion("pargap"), "\n",
+         " ",vert," ParGAP ",vert,"   by Gene Cooperman <gene@ccs.neu.edu>\n");
+  if MPI_USE_MPINU then
+    if MPI_USE_MPINU_V2 then
+      Print( " ",bbot,"   Using MPI library: MPINU2\n" );
+    else
+      Print( " ",bbot,"   Using MPI library: MPINU\n" );
+    fi;
+  else
+    Print( " ",bbot,"   Using MPI library: system MPI library\n" );
+  fi;
+  Print(" Type `?ParGAP' for information about using ParGAP.\n\n");
+fi;

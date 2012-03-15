@@ -21,11 +21,11 @@ const char * Revision_gapmpi_h =
 */
 
 StructInitInfo * InitInfoPargapmpi ( void );
-void InitPargapmpi (int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr );
+void InitPargapmpi (int * argc_ptr, char *** argv_ptr );
 
 /* For backward compatibility */
 StructInitInfo * InitInfoGapmpi ( void );
-void InitGapmpi (int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr );
+void InitGapmpi (int * argc_ptr, char *** argv_ptr );
 
 
 /****************************************************************************

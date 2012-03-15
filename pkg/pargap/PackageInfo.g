@@ -15,10 +15,10 @@
 SetPackageInfo( rec(
 PackageName := "ParGAP",
 Subtitle := "Parallel GAP",
-Version := "1.1.2",
-Date := "25/02/2004",
+Version := "1.3.0",
+Date := "11/08/2011",
 ArchiveURL := 
-          "http://www.math.rwth-aachen.de:8001/GAP/pkgs/ParGAP/pargap1r1p2",
+          "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/pargap-1.3.0",
 ArchiveFormats := ".tar.gz",
 Persons := [
   rec( 
@@ -29,17 +29,33 @@ Persons := [
     Email         := "gene@ccs.neu.edu",
     WWWHome       := "http://www.ccs.neu.edu/home/gene/",
     Place         := "Boston",
-    PostalAddress :=  "College of Computer Science, 161CN\nNortheastern University\nBoston, MA 02115\nUSA\n",
+    PostalAddress :=  "College of Computer Science, 202-WVH\nNortheastern University\nBoston, MA 02115\nUSA\n",
     Institution   := "Northeastern University"
+  ),
+  rec( 
+    LastName      := "Smith",
+    FirstNames    := "Paul",
+    IsAuthor      := false,
+    IsMaintainer  := true,
+    Email         := "paul.smith@st-andrews.ac.uk",
+    WWWHome       := "http://www.cs.st-andrews.ac.uk/~pas",
+    PostalAddress := Concatenation( [
+                         "Paul Smith\n",
+                         "School of Computer Science\n",
+                         "University of St Andrews\n",
+                         "St Andrews\n",
+                         "UK" ] ),
+    Place         := "St Andrews",
+    Institution   := "University of St Andrews"
   )
 ],
 Status := "accepted",
 CommunicatedBy := "Steve Linton (St Andrews)",
 AcceptDate := "07/1999",
 README_URL := 
-  "http://www.math.rwth-aachen.de:8001/GAP/pkgs/ParGAP/README",
+  "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/README.pargap",
 PackageInfoURL := 
-  "http://www.math.rwth-aachen.de:8001/GAP/pkgs/ParGAP/PackageInfo.g",
+  "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/PackageInfo.g",
 AbstractHTML := 
 "The ParGAP (Parallel GAP) package implements Master-Slave parallelism  on \
 multiple machines and in doing so provides  a  way  of  writing  parallel \
@@ -62,7 +78,7 @@ PackageDoc := rec(
   Autoload  := true
 ),
 Dependencies := rec(
-  GAP := ">=4.4",
+  GAP := ">=4.5",
   NeededOtherPackages := [],
   SuggestedOtherPackages := [],
   ExternalConditions := []
@@ -72,16 +88,16 @@ AvailabilityTest := function()
   if IsBoundGlobal("MPI_Initialized") then
     return ARCH_IS_UNIX() and not IsBoundGlobal("SendMsg");
   else
-    #Info(InfoWarning, 1,
-    #     "``ParGAP'' should be invoked by the script ",
-    #     "generated during installation.");
-    #Info(InfoWarning, 1,
-    #     "Type `?Running ParGAP' for more details.");
+    LogPackageLoadingMessage(PACKAGE_ERROR, Concatenation(
+      "ParGAP should be invoked by the script ",
+      "generated during installation, not as a package.\n",
+      "Type `?Running ParGAP' for more details."));
     return false;
   fi;
 end,
 
-#BannerString := "",
+BannerString := "",
+
 Autoload := true,
 #TestFile := "tst/testall.g",
 Keywords := ["Parallel",  "Top-C"]

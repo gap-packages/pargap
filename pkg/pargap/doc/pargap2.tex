@@ -2,7 +2,7 @@
 %%
 %W  pargap2.tex            ParGAP documentation            Gene Cooperman
 %%
-%H  $Id: pargap2.tex,v 1.3 2001/07/28 23:49:06 gap Exp $
+%H  $Id$
 %%
 %Y  Copyright (C) 1999-2001  Gene Cooperman
 %Y    See included file, COPYING, for conditions for copying
@@ -23,15 +23,19 @@ This means that the slave is running a simple program:
 An example using this interactive style is contained in section~"Extended
 Example".
 
-Some enhancements to this simple model should also be  noted.  The  reply
-message from the slave will wait in a  queue  until  the  master  process
-decides to read it. If unwanted messages accumulate  in  the  queue,  the
-master can execute  `FlushAllMsgs()'  (see~"FlushAllMsgs").  If  a  slave
+There are some enhancements to this model which should be noted. If  a  slave
 process prints to the standard  output,  this  will  be  visible  at  the
 console of the master process. If a slave process executes an `Error' and
 goes into a break loop, then it will  automatically  return  to  the  top
 level, return any error message to  the  master  process,  and  wait  for
-another message from the master process. If a slave process goes into  an
+another message from the master process. In addition, when using {\ParGAP} 
+with the MPINU library, 
+
+there are some enhancements
+to this model which should also be  noted.  Normally, all reply
+messages from a slave will wait in a  queue  until  the  master  process
+decides to read them. If unwanted messages accumulate  in  the  queue,  the
+master can execute  `FlushAllMsgs()'  (see~"FlushAllMsgs").  If a slave process goes into  an
 infinite loop, the master process can call `ParReset();' (see~"ParReset")
 to interrupt all slave processes and return them to their top level  loop
 as a slave listener.
@@ -151,7 +155,9 @@ flushes all messages that are waiting to  be  received  and  returns  the
 number of messages flushed. (If  there  are  no  waiting  messages  0  is
 returned.) It is essentially equivalent to executing `RecvMsg();;'  until
 there are no more messages waiting to be received (see~"RecvMsg"), except
-that it also returns the number of messages flushed.
+that it also returns the number of messages flushed. 
+*This function is only available if {\ParGAP} is built using MPINU*
+
 
 \>PingSlave( <dest> ) F
 
@@ -212,7 +218,8 @@ Exactly like `ProbeMsg', but non-blocking. It  returns  immediately  with
 \>ParReset() F
 
 flushes all pending messages from slaves, resets the  slaves,  pings  the
-slaves and returns the number of messages flushed.
+slaves and returns the number of messages flushed. 
+*This function is only available if {\ParGAP} is built using MPINU*
 
 \>ParBindGlobal( <gvar>, <value> ) F
 

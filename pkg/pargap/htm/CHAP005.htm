@@ -20,18 +20,19 @@
 <a name = "I1"></a>
 
 This chapter assumes the background  knowledge  in  section&nbsp;<a href="CHAP003.htm#SECT001">Basic  TOP-C (Master-Slave) commands</a>. <font face="Gill Sans,Helvetica,Arial">ParGAP</font> must be invoked through a script like
-<code>pargap.sh</code>  generated  in  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>'s  <code>bin</code>  during  installation.  In
-addition, there must be a <code>procgroup</code> file in the current directory  when
-<font face="Gill Sans,Helvetica,Arial">ParGAP</font> is called, or alternatively, <code>-p4pg </code><var>FULL_PATH</var><code>/procgroup</code>  may
-be included on the <code>pargap.sh</code> command line. See Section&nbsp;<a href="CHAP001.htm#SECT003">Running ParGAP</a>
-for the details. You should find a sample <code>procgroup</code> file in <font face="Gill Sans,Helvetica,Arial">ParGAP</font>'s
-<code>bin</code>   directory   after   installation   of    <font face="Gill Sans,Helvetica,Arial">ParGAP</font>.    See    the
-section&nbsp;<a href="CHAP001.htm#SECT006">Invoking ParGAP with Remote Slaves</a> for further details. Many of
+<code>pargap.sh</code>  generated  in  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>'s  <code>bin</code>  during  installation.  
+If using a system MPI library, this script must be invoked using an MPI
+launcher. Alternatively MPINUI is being used instead, then the script can
+be called directly, and there must be a <code>procgroup</code> file in the current 
+directory  when <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is called, or the location of such a file provided
+on the command line. See Section&nbsp;<a href="CHAP001.htm#SECT004">Running ParGAP</a>
+for general information, and then Sections&nbsp;<a href="CHAP001.htm#SECT007">Invoking ParGAP with Remote Slaves  (when using a system MPI library)</a> and <a href="CHAP001.htm#SECT008">Invoking ParGAP with Remote Slaves  (when using MPINU)</a> for specific details of running remote slaves with
+a system MPI library and MPINU respectively. Many of
 the examples of this section  can  be  found  in  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>'s  <code>examples</code>
 directory.
 <p>
 <p>
-<a name="SECT001"><h2>5.1 A simple example</h2></a>
+<h2><a name="SECT001">5.1 A simple example</a></h2>
 <p><p>
 A master-slave computation is invoked when a <font face="Gill Sans,Helvetica,Arial">ParGAP</font> program issues the
 command <code>MasterSlave()</code>. This command is an example  of  what  is  called
@@ -88,7 +89,7 @@ ParBroadcast(PrintToString("result = ", result));
 </pre>
 <p>
 <p>
-<a name="SECT002"><h2>5.2 ParSquare</h2></a>
+<h2><a name="SECT002">5.2 ParSquare</a></h2>
 <p><p>
 Until now, we have been using global variables.  It is better style to
 use local variables, where possible.  We rewrite the above routine in
@@ -131,7 +132,7 @@ end;
 </pre>
 <p>
 <p>
-<a name="SECT003"><h2>5.3 ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited)</h2></a>
+<h2><a name="SECT003">5.3 ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited)</a></h2>
 <p><p>
 This example can be written more compactly by using some of the
 convenience functions provided by <font face="Gill Sans,Helvetica,Arial">ParGAP</font>.  Specifically, we would
@@ -179,7 +180,7 @@ above.
 <p>
 This function provides the functionality of a common case of
 <code>SubmitTaskInput()</code>, by turning it into a <font face="Gill Sans,Helvetica,Arial">GAP</font> iterator
-(see&nbsp;<a href="../../../doc/htm/ref/CHAP028.htm#SECT007">iterators</a> in the Reference Manual).  Its meaning is best 
+(see&nbsp;<a href="../../../doc/ref/chap31.html#s8ss0">iterators</a> in the Reference Manual).  Its meaning is best 
 understood from its definition:
 <p>
 <pre>
@@ -195,13 +196,13 @@ end;
 </pre>
 <p>
 <p>
-<a name="SECT004"><h2>5.4 ParMultMat</h2></a>
+<h2><a name="SECT004">5.4 ParMultMat</a></h2>
 <p><p>
 Let us now write a matrix-matrix
 multiplication routine in this style.  Since matrix multiplication for
-dimension <i>n</i> requires <i>n</i><sup>3</sup> operations, we can afford to spend <i>n</i><sup>2</sup> time
+dimension <var>n</var> requires <var>n<sup>3</sup></var> operations, we can afford to spend <var>n<sup>2</sup></var> time
 doing any sequential work.  (A finer analysis would also consider the
-number of slaves, <i>k</i>, resulting in up to <i>k</i>*<i>n</i><sup>2</sup> time to send all
+number of slaves, <var>k</var>, resulting in up to <var>k*n<sup>2</sup></var> time to send all
 messages, depending on the MPI broadcast algorithm.)  So, a sequential
 matrix multiplication program might be written as follows.  (The style
 emphasizes clarity over efficiency.)
@@ -275,7 +276,7 @@ end );
 </pre>
 <p>
 <p>
-<a name="SECT005"><h2>5.5 DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix)</h2></a>
+<h2><a name="SECT005">5.5 DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix)</a></h2>
 <p><p>
 Now that the basic principles of the TOP-C model are clear, we
 investigate an example that requires most of the basic features of
@@ -446,7 +447,7 @@ end );
 The next section describes how to make this code more efficient.
 <p>
 <p>
-<a name="SECT006"><h2>5.6 Caching slave task outputs (ParSemiEchelonMat revisited)</h2></a>
+<h2><a name="SECT006">5.6 Caching slave task outputs (ParSemiEchelonMat revisited)</a></h2>
 <p><p>
 The code above is inefficient unless <code>nrows &gt;&gt; ncols</code>.  This is
 because if <code>nrows</code> is comparable to <code>ncols</code>, it will be rare for
@@ -503,7 +504,7 @@ generality of the method.)
 The next section describes how to make this code more efficient.
 <p>
 <p>
-<a name="SECT007"><h2>5.7 Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again)</h2></a>
+<h2><a name="SECT007">5.7 Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again)</a></h2>
 <p><p>
 <a name = "I12"></a>
 
@@ -666,7 +667,7 @@ of <code>ParSemiEchelonMatrix</code> (also known as Gaussian elimination)
 using the TOP-C model.
 <p>
 <p>
-<a name="SECT008"><h2>5.8 Raw MasterSlave (ParMultMat revisited)</h2></a>
+<h2><a name="SECT008">5.8 Raw MasterSlave (ParMultMat revisited)</a></h2>
 <p><p>
 <a name = "I17"></a>
 
@@ -684,7 +685,7 @@ sequence.
 <p>
 Effectively, when we wish to return successive values from several deeply
 nested loops, we are in the situation of programming the ``opposite of a
-<font face="Gill Sans,Helvetica,Arial">GAP</font> iterator'' (see&nbsp;<a href="../../../doc/htm/ref/CHAP028.htm#SECT007">iterators</a> in the Reference Manual).  
+<font face="Gill Sans,Helvetica,Arial">GAP</font> iterator'' (see&nbsp;<a href="../../../doc/ref/chap31.html#s8ss0">iterators</a> in the Reference Manual).  
 We are already producing successive iterator values, and we wish to 
 ``stuff them back into some iterator''.  Until <font face="Gill Sans,Helvetica,Arial">GAP</font> develops such a
 language construct <code>:-)</code> , the following example of a ``raws'' 
@@ -708,8 +709,8 @@ We make use of the following three new <font face="Gill Sans,Helvetica,Arial">Pa
 Their use will be obvious in the next example.  This time, we
 parallelize <code>SeqMultMat()</code> by defining the task as the computation of a
 single entry in the result matrix.  Hence, the task will be the
-computation of the appropriate inner product.  For dimension <i>n</i>,
-<i>n</i><sup>2</sup> tasks are now generated, and each task is generated inside a
+computation of the appropriate inner product.  For dimension <var>n</var>,
+<var>n<sup>2</sup></var> tasks are now generated, and each task is generated inside a
 doubly nested loop.
 <p>
 <pre>
@@ -768,5 +769,5 @@ end );
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP004.htm">Previous</a>] [<a href ="CHAP006.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>November 2001
+<address>ParGAP manual<br>July 2011
 </address></body></html>

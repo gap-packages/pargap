@@ -1,8 +1,8 @@
 # This is a comment.
 
 local 0
-localhost 1 @PWD@/bin/pargap.sh
-localhost 1 @PWD@/bin/pargap.sh
+localhost 1 @abs_top_builddir@/bin/pargap.sh
+localhost 1 @abs_top_builddir@/bin/pargap.sh
 # localhost 1 pargap
 
 # The general format is that "local 0" implies creation of a master.

@@ -74,7 +74,7 @@ The <strong>task input</strong> is defined to be the argument of the <strong>tas
 as a function), and the <strong>task output</strong> is the return value of the <strong>task</strong>.
 <p>
 <p>
-<a name="SECT001"><h2>3.1 Basic TOP-C (Master-Slave) commands</h2></a>
+<h2><a name="SECT001">3.1 Basic TOP-C (Master-Slave) commands</a></h2>
 <p><p>
 <a name = "I5"></a>
 
@@ -137,7 +137,7 @@ gap&gt; ParInstallTOPCGlobalFunction( "MyParListWithAgglom",
 generally more convenient to have it in a file and <code>Read</code> it in.)
 <p>
 <p>
-<a name="SECT002"><h2>3.2 Other TOP-C Commands</h2></a>
+<h2><a name="SECT002">3.2 Other TOP-C Commands</a></h2>
 <p><p>
 A master-slave computation is invoked when a <font face="Gill Sans,Helvetica,Arial">GAP</font>  program  issues  the
 command <code>MasterSlave()</code>. As given earlier, the typical form is:
@@ -245,7 +245,7 @@ the previous value of the shared data.  Thus,  <code>MasterSlave()</code>  maint
 the same shared data uniformly on all processes.
 <p>
 <p>
-<a name="SECT003"><h2>3.3 Simple Usage of MasterSlave()</h2></a>
+<h2><a name="SECT003">3.3 Simple Usage of MasterSlave()</a></h2>
 <p><p>
 This section is  concerned  with  formal  definitions  for  the  routines
 associated  with  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>.  It  is  important  to  keep  in  mind   the
@@ -280,7 +280,7 @@ information. Note that such  global  variables  cannot  be  part  of  the
 shared data, since they are modified outside of <code></code><var>UpdateSharedData</var><code>()</code>.
 <p>
 <p>
-<a name="SECT004"><h2>3.4 Efficient Parallelism in MasterSlave() using CheckTaskResult()</h2></a>
+<h2><a name="SECT004">3.4 Efficient Parallelism in MasterSlave() using CheckTaskResult()</a></h2>
 <p><p>
 It is instructive to review the logic for the  lifetime  of  a  task,  as
 described by the pseudo-code for <code>SeqMasterSlave</code> in Section&nbsp;<a href="CHAP003.htm#SECT002">Other TOP-C commands</a>. Initially, <code>MasterSlave()</code> calls <code></code><var>SubmitTaskInput</var><code>()</code> on  the
@@ -369,7 +369,7 @@ documentation''. With this in mind, the reader  may  also  wish  to  read
 criteria.
 <p>
 <p>
-<a name="SECT005"><h2>3.5 Modifying Task Output or Input (a dirty trick)</h2></a>
+<h2><a name="SECT005">3.5 Modifying Task Output or Input (a dirty trick)</a></h2>
 <p><p>
 At this point, it should be noted that  it  explicitly  <strong>is</strong>  allowed  to
 modify the input or output of a task from  within  <code></code><var>CheckTaskResult</var><code>()</code>.
@@ -398,7 +398,7 @@ Section&nbsp;<a href="CHAP003.htm#SECT006">The GOTO statement of the TOP-C model
 the use of <code>CONTINUATION_ACTION()</code>.
 <p>
 <p>
-<a name="SECT006"><h2>3.6 The GOTO statement of the TOP-C model</h2></a>
+<h2><a name="SECT006">3.6 The GOTO statement of the TOP-C model</a></h2>
 <p><p>
 <a name = "SSEC006.1"></a>
 <li><code>CONTINUATION_ACTION( </code><var>taskContinuation</var><code> )</code>
@@ -421,7 +421,7 @@ original  slave  process  then  receives  another  call   to   <code></code><var
 </code><var>taskInput</var><code> )</code>, this time with <var>taskInput</var> bound to <var>taskContinuation</var>.
 <p>
 <p>
-<a name="SECT007"><h2>3.7 Being nice to other users (Nice, Alarm and LimitRss)</h2></a>
+<h2><a name="SECT007">3.7 Being nice to other users (Nice, Alarm and LimitRss)</a></h2>
 <p><p>
 When you are running a long job on a network of  workstations,  you  will
 often be sharing it with others. Making your parallel job as  unintrusive
@@ -433,7 +433,7 @@ functions are provided.
 <li><code>UNIX_Nice( </code><var>priority</var><code> ) F</code>
 <p>
 This is  similar  to  the  <code>nice</code>  command  of  many  UNIX  shells.  UNIX
-priorities are in a range from <font face="symbol">-</font>20 to 20 with <font face="symbol">-</font>20 being the  highest.
+priorities are in a range from <var>-20</var> to 20 with <var>-20</var> being the  highest.
 Users typically start at priority  0.  You  can  give  yourself  a  lower
 priority by specifying a priority of 5, for example. Usually,  priorities
 19 and 20 are <strong>absolute</strong> priorities. Any process with a  priority  higher
@@ -466,7 +466,7 @@ the RSS. A UNIX command such as <code>top</code> can show you if your process RS
 staying below your requested limit.
 <p>
 <p>
-<a name="SECT008"><h2>3.8 Converting legacy sequential code to the TOP-C model</h2></a>
+<h2><a name="SECT008">3.8 Converting legacy sequential code to the TOP-C model</a></h2>
 <p><p>
 The (tutorial contains a section&nbsp;<a href="CHAP005.htm#SECT008">Raw MasterSlave (ParMultMat revisited)</a>,
 about <var>raw</var> version of <code>MasterSlave()</code>  that  is  useful  for  converting
@@ -476,5 +476,5 @@ recommended for writing new code, for stylistic reasons.
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP002.htm">Previous</a>] [<a href ="CHAP004.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>November 2001
+<address>ParGAP manual<br>July 2011
 </address></body></html>

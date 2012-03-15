@@ -15,7 +15,7 @@ own low-level message-based parallel  application.  The  additional  UNIX
 system calls in <font face="Gill Sans,Helvetica,Arial">ParGAP</font> may also be useful in some applications.
 <p>
 <p>
-<a name="SECT001"><h2>7.1 Tutorial introduction to the MPI C library</h2></a>
+<h2><a name="SECT001">7.1 Tutorial introduction to the MPI C library</a></h2>
 <p><p>
 <a name = "I0"></a>
 
@@ -227,17 +227,17 @@ Other typical bugs in MPI programs are:
 <p>
 <dl compact>
 <p>
-<dt><font face="symbol">·</font><dd>
+<dt><var>bullet</var><dd>
     Incorrectly matching corresponding sends and receives or having  more
     or fewer sends than receives due to the logic of multiple  sends  and
     receives within distinct loops.
 <p>
-<dt><font face="symbol">·</font><dd>
+<dt><var>bullet</var><dd>
     Reaching deadlock because all active processes have blocking calls to
     <code>MPI_Recv()</code> while no process has  yet  reached  code  that  executes
     <code>MPI_Send()</code>.
 <p>
-<dt><font face="symbol">·</font><dd>
+<dt><var>bullet</var><dd>
     Incorrect use of barriers in collective  communication,  whereby  one
     process might execute:
 <p>
@@ -273,7 +273,7 @@ TOP-C method was  designed  to  provide  a  higher  level,  task-oriented
 designing an efficient high level algorithm.
 <p>
 <p>
-<a name="SECT002"><h2>7.2 Other low level commands</h2></a>
+<h2><a name="SECT002">7.2 Other low level commands</a></h2>
 <p><p>
 <a name = "I4"></a>
 
@@ -381,5 +381,5 @@ making them easier for interactive use.
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP006.htm">Previous</a>] [<a href ="CHAP008.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>November 2001
+<address>ParGAP manual<br>July 2011
 </address></body></html>

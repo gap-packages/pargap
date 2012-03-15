@@ -2,18 +2,21 @@ C pargap1.tex 1. Writing Parallel Programs in GAP Easily
 I 1.0. ParGAP
 S 1.1. Overview of ParGAP
 I 1.1. MPI!standard
-S 1.2. Installing ParGAP
-I 1.2. installation
-S 1.3. Running ParGAP
-S 1.4. Extended Example
-I 1.4. example!Slave Listener
-I 1.4. Slave Listener!example
-S 1.5. Author
-S 1.6. Invoking ParGAP with Remote Slaves
-S 1.7. Problems with Installation
-S 1.8. Problems with Hosts on Multiple Networks
-S 1.9. Problems with Passwords (Getting Around Security)
-S 1.10. Modifying the GAP kernel
+S 1.2. Choosing an MPI Library
+S 1.3. Installing ParGAP
+I 1.3. installation
+S 1.4. Running ParGAP
+S 1.5. Extended Example
+I 1.5. example!Slave Listener
+I 1.5. Slave Listener!example
+S 1.6. Author
+S 1.7. Invoking ParGAP with Remote Slaves (when using a system MPI library)
+S 1.8. Invoking ParGAP with Remote Slaves (when using MPINU)
+S 1.9. Problems Installing or Invoking ParGAP
+S 1.10. Problems Running ParGAP with MPINU
+S 1.11. Problems Running ParGAP with a System MPI Implementation
+S 1.12. Problems with Passwords (Getting Around Security)
+S 1.13. Modifying the GAP kernel
 C pargap2.tex 2. Slave Listener
 S 2.1. Slave Listener Commands
 F 2.1. SendMsg

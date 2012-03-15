@@ -5,13 +5,13 @@
 ##
 ##  Master Slave definitions.
 ##
-#H  @(#)$Id: masslave.g,v 1.8 2001/11/17 12:17:04 gap Exp $
+#H  @(#)$Id$
 ##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
 Revision.pargap_masslave_g :=
-    "@(#)$Id: masslave.g,v 1.8 2001/11/17 12:17:04 gap Exp $";
+    "@(#)$Id$";
 
 # Provides:  MasterSlave(), IsUpToDate(), ParTrace (default value is true),
 #            ParInstallTOPCGlobalFunction(),

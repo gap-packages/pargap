@@ -29,7 +29,7 @@ model  of  parallelism  is  recommended,   and   it   is   described   in
 Section&nbsp;<a href="CHAP004.htm#SECT004">TOP-C model for non-trivial parallelism</a>.
 <p>
 <p>
-<a name="SECT001"><h2>4.1 Trivial Parallelism</h2></a>
+<h2><a name="SECT001">4.1 Trivial Parallelism</a></h2>
 <p><p>
 In parallel computation, perhaps 80% of the applications fall under  the
 heading of ``trivial parallelism''. These are  situations  in  which  one
@@ -46,8 +46,9 @@ local workstation), and the master process talks to each of various slave
 processes. In its simplest form, one merely generates a  list  of  inputs
 for the cases, and  writes  a  suitable  function  to  provide  the  case
 information. Effectively, trivial  parallelism  can  be  expressed  by  a
-parallel version of <font face="Gill Sans,Helvetica,Arial">GAP</font>'s <code>List()</code>  function  (see&nbsp;<a href="../../../doc/htm/ref/CHAP021.htm#SSEC016.16">List</a>  in  the
-Reference  Manual),  which  is  called  <code>ParList()</code>  (see&nbsp;<a href="CHAP002.htm#SSEC001.13">ParList</a>)   in
+parallel version of <font face="Gill Sans,Helvetica,Arial">GAP</font>'s <code>List()</code>  function  
+(see&nbsp;<a href="../../../doc/ref/chap22.html#s20ss19">List (for a list (and a function))</a>  in  the Reference  Manual),  
+which  is  called  <code>ParList()</code>  (see&nbsp;<a href="CHAP002.htm#SSEC001.13">ParList</a>)   in
 <font face="Gill Sans,Helvetica,Arial">ParGAP</font>.
 <p>
 The following is  an  example  of  a  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>  session  that  uses  the
@@ -109,60 +110,37 @@ gap&gt; ParList([1..100000],
 </pre>
 <p>
 <p>
-<a name="SECT002"><h2>4.2 Using ParGAP interactively</h2></a>
+<h2><a name="SECT002">4.2 Using ParGAP interactively</a></h2>
 <p><p>
 Having seen an example where <font face="Gill Sans,Helvetica,Arial">ParGAP</font> can be useful, one next  needs  to
-know what is involved in setting up and using <font face="Gill Sans,Helvetica,Arial">ParGAP</font>.  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>  runs
-only on UNIX, due to its dependence on an MPI  subset  (included  in  the
-distribution) that calls UNIX sockets. It  should  be  possible  to  port
-<font face="Gill Sans,Helvetica,Arial">ParGAP</font> to Windows, either through the use of Cygwin (UNIX emulation on
-Windows) or through a native Windows MPI implementation.  Similarly,  the
-code has been written in a ``vanilla'' manner, so that in  principle,  it
-should be easy to port to another interactive language, such as MAGMA  or
-LISP. An older version was in fact written in LISP&nbsp;<a href="biblio.htm#Coo95"><cite>Coo95</cite></a>, although
-the current version is not implemented in LISP. In the following,  recall
-that <font face="Gill Sans,Helvetica,Arial">ParGAP</font>  employs  a  master-slave  architecture,  with  the  local
+know what is involved in setting up and using <font face="Gill Sans,Helvetica,Arial">ParGAP</font>. In the following,
+recall that <font face="Gill Sans,Helvetica,Arial">ParGAP</font> employs  a  master-slave  architecture, with the local
 process being the ``master'' process, and all others being ``slaves''.
 <p>
 <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is installed in the same way as other  <font face="Gill Sans,Helvetica,Arial">GAP</font>  packages.  After
 extracting the <font face="Gill Sans,Helvetica,Arial">ParGAP</font> files, one invokes <code>configure</code> and <code>make</code>.  (See
-Section&nbsp;<a href="CHAP001.htm#SECT002">Installing ParGAP</a> for the details.) One next writes a file with
-a list of  slave  processors  to  attach,  and  an  indication  of  where
-<font face="Gill Sans,Helvetica,Arial">ParGAP</font> is located on that processor; the usual way  is  to  name  this
-file <code>procgroup</code> and have it in the directory  one  starts  up  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>
-(see Section&nbsp;<a href="CHAP001.htm#SECT003">Running ParGAP</a> for details). An example  <code>procgroup</code>  file
-is:
-<p>
-<pre>
-# This is a sample ParGAP procgroup file.
-# Lines starting with a # are comments.
-# Blank lines are also treated as comments.
-
-# The following line generates the MASTER process
-local 0
-
-# Each of the following `localhost' lines generates 
-# a SLAVE process on the same machine as the MASTER
-localhost 1 /proj/sparc/gap4r3/pkg/pargap/bin/pargap.sh
-localhost 1 /proj/sparc/gap4r3/pkg/pargap/bin/pargap.sh
-
-# The following line generates a SLAVE process on a remote
-# machine: `iron.ccs.neu.edu' (called via rsh or ssh or ...)
-iron.ccs.neu.edu 1 /proj/alpha/gap4r3/pkg/pargap/bin/pargap.sh
-</pre>
-<p>
-Next, instead of invoking <code>gap</code>, one  then  invokes  the  supplied  shell
+Section&nbsp;<a href="CHAP001.htm#SECT003">Installing ParGAP</a> for the details.) Instead of invoking <code>gap</code>, 
+one  then  invokes  the  supplied  shell
 script,  <code>pargap.sh</code>,  (possibly  modified  and/or  renamed;  again   see
-Section&nbsp;<a href="CHAP001.htm#SECT003">Running ParGAP</a> for the details). Observe that unlike most other
-<font face="Gill Sans,Helvetica,Arial">GAP</font> packages, one should not  call  <code>RequirePackage()</code>  function  from
+Section&nbsp;<a href="CHAP001.htm#SECT004">Running ParGAP</a> for the details). Observe that unlike most other
+<font face="Gill Sans,Helvetica,Arial">GAP</font> packages, one should not  call  <code>LoadPackage()</code>  function  from
 within a <font face="Gill Sans,Helvetica,Arial">GAP</font> session to start <font face="Gill Sans,Helvetica,Arial">ParGAP</font>. As usual,  master  and  slave
 processes read a  <code>.gaprc</code>  file  in  the  home  directory,  if  present.
-<font face="Gill Sans,Helvetica,Arial">ParGAP</font> looks  for  a  file  named  <code>procgroup</code>  file  in  the  current
-directory, but can be directed  to  use  a  different  file  through  the
-<code>-p4pg</code> switch.
 <p>
-The following example assumes that <code>pargap</code> is a symbolic link  or  alias
-for the full pathname of <code>pargap.sh</code>. Hence, if one always uses <font face="Gill Sans,Helvetica,Arial">ParGAP</font>
+The method by which slave processes are started depends on the MPI 
+implementation used (see Section&nbsp;<a href="CHAP001.htm#SECT004">Running ParGAP</a>). When using a system MPI
+library, the system MPI launcher should be used to start <font face="Gill Sans,Helvetica,Arial">ParGAP</font>, and 
+this also starts up the slaves. One commonly-supported MPI launcher syntax is
+<p>
+<code> mpiexec -n </code><var>num</var><code> pargap.sh</code>
+<p>
+where <code></code><var>num</var><code></code> is the total number of copies of <code>pargap.sh</code> that you wish to 
+run. If, instead, <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is built to use MPINU, the subset MPI implementation
+included with <font face="Gill Sans,Helvetica,Arial">ParGAP</font>, then you should invoke <code>pargap.sh</code> directly,
+and <font face="Gill Sans,Helvetica,Arial">ParGAP</font> will start up the slave processes itself. For details of these, 
+it looks  for  a  file  named  <code>procgroup</code>  file  in  the  current
+directory, but can be directed  to  use  a  different  file  through  the
+<code>-p4pg</code> switch. Hence, if one always uses <font face="Gill Sans,Helvetica,Arial">ParGAP</font>
 with the slave processes specified in <code>myprocgroup.big</code>, one may wish  to
 set up an alias or else a  symbolic  link  to  a  script  containing  the
 equivalent of:
@@ -170,8 +148,7 @@ equivalent of:
 <code>pargap.sh -p4pg </code><var>PATH</var><code>/myprocgroup.big</code>
 <p>
 Observe also that heterogeneous computing  is  supported,  in  that  each
-slave machine may be a different dialect of UNIX running under  different
-hardware.
+slave machine may run a different operating system on different hardware.
 <p>
 Within <font face="Gill Sans,Helvetica,Arial">ParGAP</font>, the standard message-passing commands  (send,  receive,
 probe,  etc.)  are  available.  The  slaves  are  numbered  consecutively
@@ -190,8 +167,9 @@ returned. Note that the final semicolon, normally required by <font face="Gill S
 optional in a command string for a message.
 <p>
 Most of the other commands are clear from context. Every <code>SendMsg()</code> to a
-slave must be balanced  by  a  <code>RecvMsg()</code>,  except  where  the  commands
-<code>FlushAllMsgs()</code> and <code>ParReset()</code> are used to flush any pending  messages
+slave must be balanced  by  a  <code>RecvMsg()</code>. The exception to this rule
+is that, when using MPINU, the  commands <code>FlushAllMsgs()</code> and <code>ParReset()</code> 
+are available and may be used to flush any pending  messages
 from a slave. A <code>SendRecvMsg(</code><var>string</var><code>, </code><var>i</var><code>)</code> command is equivalent to the
 consecutive commands <code>SendMsg(</code><var>string</var><code>,  </code><var>i</var><code>)</code>  and  <code>RecvMsg(</code><var>i</var><code>)</code>.  The
 command <code>BroadcastMsg()</code> sends its string argument  to  each  slave,  and
@@ -209,11 +187,11 @@ above commands.
 <p>
 An illustration of the usage of  the  commands  mentioned  above  with  a
 sample <font face="Gill Sans,Helvetica,Arial">ParGAP</font> session, for which a <code>procgroup</code> file  has  defined  two
-slaves is the first example given  in  Section&nbsp;<a href="CHAP001.htm#SECT004">Extended  Example</a>.  It's
+slaves is the first example given  in  Section&nbsp;<a href="CHAP001.htm#SECT005">Extended  Example</a>.  It's
 recommended that you review that example at this point.
 <p>
 <p>
-<a name="SECT003"><h2>4.3 Streaming</h2></a>
+<h2><a name="SECT003">4.3 Streaming</a></h2>
 <p><p>
 Next, we demonstrate a  simple  implementation  of  ``streaming''  as  an
 example of how easy it is to use  the  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>  tools  to  provide  new
@@ -227,7 +205,8 @@ problem. One would like to to solve the  problem  simultaneously  on  two
 processors, each using a distinct algorithm.  Whichever  processor  finds
 the solution first should report back to the master process.  The  master
 process should then interrupt the other slave, so as to make it available
-for further  computation.  This  is  useful  when  one  has  a  heuristic
+for further  computation. (NB Resetting of slaves is only possible with
+the MPINU library.) This  is  useful  when  one  has  a  heuristic
 available that may finish early with the correct answer, or may  continue
 for a very long time. The heuristic can then  be  ``streamed''  alongside
 the standard algorithm, in full confidence that  the  standard  algorithm
@@ -235,13 +214,13 @@ will provide a reasonable upper bound on the time to compute an answer.
 <p>
 One way to provide ``streaming'' functionality is by  the  implementation
 of a function we describe below that is inspired  by  <font face="Gill Sans,Helvetica,Arial">GAP</font>'s  <code>First()</code>
-function (see&nbsp;<a href="../../../doc/htm/ref/CHAP021.htm#SSEC016.19">First</a> in the <font face="Gill Sans,Helvetica,Arial">GAP</font> Reference Manual).  The  function
+function (see&nbsp;<a href="../../../doc/ref/chap22.html#s20ss22">First</a> in the <font face="Gill Sans,Helvetica,Arial">GAP</font> Reference Manual).  The  function
 <code>First()</code> takes a list and boolean function as arguments, and returns the
 first element of the list for which the boolean function returns  <code>true</code>.
 In   contrast,   we   define   a   corresponding   <font face="Gill Sans,Helvetica,Arial">ParGAP</font>    function,
 <code>ParFirstResult()</code>, which takes  a  list  and  a  (general)  function  as
-arguments. Messages are sent to the slaves causing  the  <i>i</i>th  slave  to
-evaluate the function on the <i>i</i>th list element. The  value  returned  is
+arguments. Messages are sent to the slaves causing  the  <var>i</var>th  slave  to
+evaluate the function on the <var>i</var>th list element. The  value  returned  is
 the value obtained from whichever slave  finishes  first.  Note  that  in
 consistency with the goal of streaming, the function signals an error  if
 asked to evaluate a list with more entries than the number of slaves.
@@ -258,7 +237,7 @@ gap&gt; ParFirstResult := function( list, fnc )
 &gt;              i );
 &gt;   od;
 &gt;   result := RecvMsg(); # default is MPI_ANY_SOURCE
-&gt;   ParReset(); # Interrupt all other slaves
+&gt;   ParReset(); # Interrupt all other slaves - only if using MPINU
 &gt;   return result;
 &gt; end;;
 </pre>
@@ -266,19 +245,19 @@ gap&gt; ParFirstResult := function( list, fnc )
 We now demonstrate the use of <code>ParFirstResult()</code>  in  ``streaming''.  For
 our example we need the <font face="Gill Sans,Helvetica,Arial">FactInt</font> package by Stefan Kohl. To  get
 this package if you don't have it, visit
-<a href="http://www-gap.dcs.st-and.ac.uk/gap/Share/factint.html">http://www-gap.dcs.st-and.ac.uk/gap/Share/factint.html</a>
+<a href="http://www.cip.mathematik.uni-stuttgart.de/~kohlsn/factint.html">http://www.cip.mathematik.uni-stuttgart.de/~kohlsn/factint.html</a>
 <p>
 or the equivalent at one of <font face="Gill Sans,Helvetica,Arial">GAP</font>'s mirror sites, and  follow  the  easy
 installation instructions.
 <p>
-If one hasn't already included a  <code>RequirePackage("factint");</code>  statement
+If one hasn't already included a  <code>LoadPackage("factint");</code>  statement
 in one's <code>.gaprc</code> file then it is necessary to do:
 <p>
 <pre>
-gap&gt; ParEval("RequirePackage(\"factint\")");
+gap&gt; ParEval("LoadPackage(\"factint\")");
 
-Loading FactInt 1.1 (Routines for Integer Factorization),
-by Stefan.Kohl@cip.mathematik.uni-stuttgart.de
+Loading FactInt 1.5.2 (Routines for Integer Factorization )
+by Stefan Kohl, kohl@mathematik.uni-stuttgart.de
 
 true
 </pre>
@@ -306,7 +285,7 @@ integer, but one uses the multiple polynomial quadratic  sieve  algorithm
 functions <code>FactorsMPQS</code> and <code>FactorsCFRAC</code> that perform these  algorithms
 are  defined  by  the  <font face="Gill Sans,Helvetica,Arial">FactInt</font>  package.  We  demonstrate   the
 ``streaming'' of these algorithms in  determining  the  factorization  of
-35!+1.
+<var>35!+1</var>.
 <p>
 <pre>
 gap&gt; # Now, define StreamingFactInt() on each of the slaves.
@@ -317,8 +296,13 @@ gap&gt; ParFirstResult([1,2], i-&gt;StreamingFactInt(i, 35) );
 [ "MPQS ALGORITHM", [ 137, 379, 17839, 340825649, 32731815563800396289317 ] ]
 </pre>
 <p>
+The <code>ParReset()</code> function to reset the other slaves is only available if 
+<font face="Gill Sans,Helvetica,Arial">ParGAP</font> is built to use MPINU. If you are using a system MPI library then 
+the other slaves will continue with their algorithm, and you will need to 
+wait for them to complete and return a result before reusing them. 
 <p>
-<a name="SECT004"><h2>4.4 TOP-C model for non-trivial parallelism</h2></a>
+<p>
+<h2><a name="SECT004">4.4 TOP-C model for non-trivial parallelism</a></h2>
 <p><p>
 There are many examples  where  trivial  parallelism  does  not  suffice.
 Typically, this happens either when there are global variables that  must
@@ -452,5 +436,5 @@ on the master process. In  the  context  of  the  user-provided  function
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP003.htm">Previous</a>] [<a href ="CHAP005.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>November 2001
+<address>ParGAP manual<br>July 2011
 </address></body></html>
