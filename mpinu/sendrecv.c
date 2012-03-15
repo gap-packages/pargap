@@ -417,8 +417,8 @@ if ( num_bytes == 0 ) printf("rank(%d): recv returned 0\n", MPINU_myrank );
   if ( num_bytes == 0 && timeout == NULL ) goto TRYAGAIN; /* Why does this happen? */
   if ( num_bytes != sizeof(buf_hdr) ) {
     /* Possible non-local error or loss of socket? */
-    printf("read_msg_hdr(%d):  Header of size %d received instead of %d.\n",
-           MPINU_myrank, num_bytes, sizeof(buf_hdr));
+    printf("read_msg_hdr(%d):  Header of size %d received instead of %lu.\n",
+           MPINU_myrank, num_bytes, (unsigned long)sizeof(buf_hdr));
     FD_ZERO(&MPINU_fdset2);
     FD_SET( fd, &MPINU_fdset2);
     zerotime.tv_sec = 0;

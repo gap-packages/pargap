@@ -2,7 +2,7 @@
 %%
 %W  tutorial.tex           ParGAP documentation            Gene Cooperman
 %%
-%H  $Id: tutorial.tex,v 1.3 2001/11/16 15:57:00 gap Exp $
+%H  $Id$
 %%
 %Y  Copyright (C) 1999-2001  Gene Cooperman
 %Y    See included file, COPYING, for conditions for copying
@@ -45,8 +45,9 @@ local workstation), and the master process talks to each of various slave
 processes. In its simplest form, one merely generates a  list  of  inputs
 for the cases, and  writes  a  suitable  function  to  provide  the  case
 information. Effectively, trivial  parallelism  can  be  expressed  by  a
-parallel version of {\GAP}'s `List()'  function  (see~"ref:List"  in  the
-Reference  Manual),  which  is  called  `ParList()'  (see~"ParList")   in
+parallel version of {\GAP}'s `List()'  function  
+(see~"ref:List (for a list (and a function))"  in  the Reference  Manual),  
+which  is  called  `ParList()'  (see~"ParList")   in
 {\ParGAP}.
 
 The following is  an  example  of  a  {\ParGAP}  session  that  uses  the
@@ -111,57 +112,34 @@ gap> ParList([1..100000],
 \Section{Using ParGAP interactively}
 
 Having seen an example where {\ParGAP} can be useful, one next  needs  to
-know what is involved in setting up and using {\ParGAP}.  {\ParGAP}  runs
-only on UNIX, due to its dependence on an MPI  subset  (included  in  the
-distribution) that calls UNIX sockets. It  should  be  possible  to  port
-{\ParGAP} to Windows, either through the use of Cygwin (UNIX emulation on
-Windows) or through a native Windows MPI implementation.  Similarly,  the
-code has been written in a ``vanilla'' manner, so that in  principle,  it
-should be easy to port to another interactive language, such as MAGMA  or
-LISP. An older version was in fact written in LISP~\cite{Coo95}, although
-the current version is not implemented in LISP. In the following,  recall
-that {\ParGAP}  employs  a  master-slave  architecture,  with  the  local
+know what is involved in setting up and using {\ParGAP}. In the following,
+recall that {\ParGAP} employs  a  master-slave  architecture, with the local
 process being the ``master'' process, and all others being ``slaves''.
 
 {\ParGAP} is installed in the same way as other  {\GAP}  packages.  After
 extracting the {\ParGAP} files, one invokes `configure' and `make'.  (See
-Section~"Installing ParGAP" for the details.) One next writes a file with
-a list of  slave  processors  to  attach,  and  an  indication  of  where
-{\ParGAP} is located on that processor; the usual way  is  to  name  this
-file `procgroup' and have it in the directory  one  starts  up  {\ParGAP}
-(see Section~"Running ParGAP" for details). An example  `procgroup'  file
-is:
-
-\begintt
-# This is a sample ParGAP procgroup file.
-# Lines starting with a # are comments.
-# Blank lines are also treated as comments.
-
-# The following line generates the MASTER process
-local 0
-
-# Each of the following `localhost' lines generates 
-# a SLAVE process on the same machine as the MASTER
-localhost 1 /proj/sparc/gap4r3/pkg/pargap/bin/pargap.sh
-localhost 1 /proj/sparc/gap4r3/pkg/pargap/bin/pargap.sh
-
-# The following line generates a SLAVE process on a remote
-# machine: `iron.ccs.neu.edu' (called via rsh or ssh or ...)
-iron.ccs.neu.edu 1 /proj/alpha/gap4r3/pkg/pargap/bin/pargap.sh
-\endtt
-
-Next, instead of invoking `gap', one  then  invokes  the  supplied  shell
+Section~"Installing ParGAP" for the details.) Instead of invoking `gap', 
+one  then  invokes  the  supplied  shell
 script,  `pargap.sh',  (possibly  modified  and/or  renamed;  again   see
 Section~"Running ParGAP" for the details). Observe that unlike most other
-{\GAP} packages, one should not  call  `RequirePackage()'  function  from
+{\GAP} packages, one should not  call  `LoadPackage()'  function  from
 within a {\GAP} session to start {\ParGAP}. As usual,  master  and  slave
 processes read a  `.gaprc'  file  in  the  home  directory,  if  present.
-{\ParGAP} looks  for  a  file  named  `procgroup'  file  in  the  current
-directory, but can be directed  to  use  a  different  file  through  the
-`-p4pg' switch.
 
-The following example assumes that `pargap' is a symbolic link  or  alias
-for the full pathname of `pargap.sh'. Hence, if one always uses {\ParGAP}
+The method by which slave processes are started depends on the MPI 
+implementation used (see Section~"Running ParGAP"). When using a system MPI
+library, the system MPI launcher should be used to start {\ParGAP}, and 
+this also starts up the slaves. One commonly-supported MPI launcher syntax is
+
+\){\kernttindent} mpiexec -n <num> pargap.sh
+
+where `<num>' is the total number of copies of `pargap.sh' that you wish to 
+run. If, instead, {\ParGAP} is built to use MPINU, the subset MPI implementation
+included with {\ParGAP}, then you should invoke `pargap.sh' directly,
+and {\ParGAP} will start up the slave processes itself. For details of these, 
+it looks  for  a  file  named  `procgroup'  file  in  the  current
+directory, but can be directed  to  use  a  different  file  through  the
+`-p4pg' switch. Hence, if one always uses {\ParGAP}
 with the slave processes specified in `myprocgroup.big', one may wish  to
 set up an alias or else a  symbolic  link  to  a  script  containing  the
 equivalent of:
@@ -169,8 +147,7 @@ equivalent of:
 \){\kernttindent}pargap.sh -p4pg <PATH>/myprocgroup.big
 
 Observe also that heterogeneous computing  is  supported,  in  that  each
-slave machine may be a different dialect of UNIX running under  different
-hardware.
+slave machine may run a different operating system on different hardware.
 
 Within {\ParGAP}, the standard message-passing commands  (send,  receive,
 probe,  etc.)  are  available.  The  slaves  are  numbered  consecutively
@@ -189,8 +166,9 @@ returned. Note that the final semicolon, normally required by {\GAP},  is
 optional in a command string for a message.
 
 Most of the other commands are clear from context. Every `SendMsg()' to a
-slave must be balanced  by  a  `RecvMsg()',  except  where  the  commands
-`FlushAllMsgs()' and `ParReset()' are used to flush any pending  messages
+slave must be balanced  by  a  `RecvMsg()'. The exception to this rule
+is that, when using MPINU, the  commands `FlushAllMsgs()' and `ParReset()' 
+are available and may be used to flush any pending  messages
 from a slave. A `SendRecvMsg(<string>, <i>)' command is equivalent to the
 consecutive commands `SendMsg(<string>,  <i>)'  and  `RecvMsg(<i>)'.  The
 command `BroadcastMsg()' sends its string argument  to  each  slave,  and
@@ -226,7 +204,8 @@ problem. One would like to to solve the  problem  simultaneously  on  two
 processors, each using a distinct algorithm.  Whichever  processor  finds
 the solution first should report back to the master process.  The  master
 process should then interrupt the other slave, so as to make it available
-for further  computation.  This  is  useful  when  one  has  a  heuristic
+for further  computation. (NB Resetting of slaves is only possible with
+the MPINU library.) This  is  useful  when  one  has  a  heuristic
 available that may finish early with the correct answer, or may  continue
 for a very long time. The heuristic can then  be  ``streamed''  alongside
 the standard algorithm, in full confidence that  the  standard  algorithm
@@ -257,7 +236,7 @@ gap> ParFirstResult := function( list, fnc )
 >              i );
 >   od;
 >   result := RecvMsg(); # default is MPI_ANY_SOURCE
->   ParReset(); # Interrupt all other slaves
+>   ParReset(); # Interrupt all other slaves - only if using MPINU
 >   return result;
 > end;;
 \endexample
@@ -265,19 +244,19 @@ gap> ParFirstResult := function( list, fnc )
 We now demonstrate the use of `ParFirstResult()'  in  ``streaming''.  For
 our example we need the \package{FactInt} package by Stefan Kohl. To  get
 this package if you don't have it, visit
-\URL{http://www-gap.dcs.st-and.ac.uk/gap/Share/factint.html}
+\URL{http://www.cip.mathematik.uni-stuttgart.de/~kohlsn/factint.html}
 
 or the equivalent at one of {\GAP}'s mirror sites, and  follow  the  easy
 installation instructions.
 
-If one hasn't already included a  `RequirePackage("factint");'  statement
+If one hasn't already included a  `LoadPackage("factint");'  statement
 in one's `.gaprc' file then it is necessary to do:
 
 \beginexample
-gap> ParEval("RequirePackage(\"factint\")");
+gap> ParEval("LoadPackage(\"factint\")");
 
-Loading FactInt 1.1 (Routines for Integer Factorization),
-by Stefan.Kohl@cip.mathematik.uni-stuttgart.de
+Loading FactInt 1.5.2 (Routines for Integer Factorization )
+by Stefan Kohl, kohl@mathematik.uni-stuttgart.de
 
 true
 \endexample
@@ -315,6 +294,13 @@ gap> ParFirstResult([1,2], i->StreamingFactInt(i, 35) );
 ... resetting ...
 [ "MPQS ALGORITHM", [ 137, 379, 17839, 340825649, 32731815563800396289317 ] ]
 \endexample
+
+The `ParReset()' function to reset the other slaves is only available if 
+{\ParGAP} is built to use MPINU. If you are using a system MPI library then 
+the other slaves will continue with their algorithm, and you will need to 
+wait for them to complete and return a result before reusing them. 
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{TOP-C model for non-trivial parallelism}

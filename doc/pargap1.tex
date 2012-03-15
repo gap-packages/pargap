@@ -2,7 +2,7 @@
 %%
 %W  pargap1.tex            ParGAP documentation            Gene Cooperman
 %%
-%H  $Id: pargap1.tex,v 1.8 2001/11/16 15:57:00 gap Exp $
+%H  $Id$
 %%
 %Y  Copyright (C) 1999-2001  Gene Cooperman
 %Y    See included file, COPYING, for conditions for copying
@@ -46,7 +46,7 @@ Section~"Installing ParGAP" for how to install {\ParGAP};
 
 \item{$\bullet$}
 Section~"Running ParGAP"  for  how  to  run  {\ParGAP}  (*not*  by  using
-`RequirePackage'); and
+`LoadPackage'); and
 
 \item{$\bullet$}
 Section~"Extended Example"  for  some introductory {\ParGAP} examples.
@@ -71,14 +71,14 @@ Foundation grants CCR-9509783 and CCR-9732330.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Overview of ParGAP}
 
-{\ParGAP} is currently functional only on UNIX installations. (Cygwin for
-Windows is also an option, if you would like to port it.)  {\ParGAP}  can
-be  installed  on  top  of   an   existing   {\GAP}   installation.   See
-Section~"Installing  ParGAP"  for   instructions   on   installation   of
-{\ParGAP}. At the time that {\ParGAP} is invoked, a special ``procgroup''
-file must be available to tell {\ParGAP}  which  processors  to  use  for
-slave processors. See sections~"Installing ParGAP" and~"Extended Example"
-for instructions on invoking {\ParGAP}. If there are  questions  or  bugs
+{\ParGAP} is installed on top of an existing {\GAP} installation. It 
+comes with its own subset MPI implementation (currently functional only on 
+UNIX installations), or it can use your system MPI libraries, if present. 
+See Section~"Installing  ParGAP" for instructions on installation of {\ParGAP}. 
+At the time that {\ParGAP} is invoked, a special file or command line 
+parameter must be used to tell {\ParGAP}  how many local processes or which 
+remote machines to use for slave processors. See section~"Running ParGAP" for 
+instructions on invoking {\ParGAP}. If there are  questions  or  bugs
 concerning {\ParGAP}, please write to: \Mailto{gene@ccs.neu.edu}
 
 If one wishes only to try out the parallel features, the first five pages
@@ -105,11 +105,11 @@ highest layers (Slave Listener and Master Slave) meet all their needs.
 `1) MPI:'&
     The lowest layer is MPI. Most users can ignore this layer. MPI  is  a
     standard for message-based parallel  computation.  A  subset  of  the
-    original MPI commands is provided. The syntax is  modified  from  the
-    original C binding  to  make  a  {\GAP}  binding  in  an  interpreted
-    environment more convenient. This includes default arguments,  useful
-    return  values,  and  `Error'  break  in  the  presence  of   errors.
-    `MPI_Init()'       (see~"MPI_Init")       and        `MPI_Finalize()'
+    original MPI commands is exposed at the {\GAP} level. The syntax is
+    modified from the original C binding to  make  a  {\GAP}  binding in
+    an interpreted environment more convenient. This includes default
+    arguments, useful return values, and `Error' break in the presence of
+    errors. `MPI_Init()' (see~"MPI_Init") and `MPI_Finalize()'
     (see~"MPI_Finalize") are invoked automatically by {\ParGAP}.
 
 `'& The MPI layer is not documented, since most users will not  be  using
@@ -118,10 +118,11 @@ highest layers (Slave Listener and Master Slave) meet all their needs.
     name alone (e.g.: `MPI_Send;' ) will cause it to display the  calling
     syntax. The same information is displayed after  an  incorrect  call.
     The  return  value  is  typically  obvious.  MPI  is  implemented  in
-    `src/pargap.c'. The  standard  distribution  uses  a  simple,  subset
-    implementation of MPI in `pkg/gapmpi/mpinu/', which is implemented on
-    top of a standard sockets interface. It  is  possible  to  substitute
-    other implementations of MPI.
+    `src/pargap.c'. {\ParGAP} will use a sysem MPI implementation if one is
+    present, and the distribution also includes two versions of a simple, subset
+    implementation of MPI in `pkg/gapmpi/mpinu/' and `pkg/gapmpi/mpinu2/', 
+    which is implemented on top of a standard sockets interface, which can be 
+    used instead..
 
 \atindex{MPI!standard}{@MPI!standard}
 `'& For those who wish to directly use the MPI interface, the meanings of
@@ -132,7 +133,7 @@ highest layers (Slave Listener and Master Slave) meet all their needs.
 `'&MPI Standard (version 1.1):
    \URL{http://www.mpi-forum.org/docs/mpi-11-html/mpi-report.html}
 
-`'&UNIX style man pages: \URL{http://www-c.mcs.anl.gov/mpi/www/}
+`'&UNIX style man pages: \URL{http://www.mcs.anl.gov/research/projects/mpi/www/}
 
 `2) Slave Listener:'&
     This  layer   provides   basic   message   passing   facilities   for
@@ -202,8 +203,8 @@ BroadcastMsg("x:=\"abc\"; Print(Length(x), \"\\n\")");;
     version in {\GAP} currently works only in a distributed  environment.
     In the C~language, this  parallel  model  is  known  as  TOP-C  (Task
     Oriented Parallel~C). For examples of the use of the TOP-C model  see
-    \cite{Coo98},     \cite{CFTY94},     \cite{CH97},      \cite{CHLM97},
-    \cite{CLMW96}, and \cite{CT96}.
+    \cite{Coo98},     \cite{CCHW02},      \cite{CFTY94},     \cite{CG02},
+    \cite{CH97}, \cite{CHLM97}, \cite{CLMW96}, and \cite{CT96}.
 
 `'& While no parallel software can eliminate the problem of designing  an
     algorithm that is efficient in  a  parallel  environment,  the  TOP-C
@@ -216,27 +217,82 @@ BroadcastMsg("x:=\"abc\"; Print(Length(x), \"\\n\")");;
 \enditems
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Choosing an MPI Library}
+
+If you are using Linux and wish to try out {\ParGAP} quickly, you
+can skip this section and let the {\ParGAP} build process choose an MPI
+library for you. If you have a little more time, or are running on a different
+system, please read on.
+
+{\ParGAP} uses MPI, a standard Message Passing  Interface for 
+communicating between processes. Since the details of inter-process 
+communication are system-specific, {\ParGAP} relies on an external library
+to provide its MPI functions. A implementation of a sufficient subset of MPI,
+which runs on Linux and OS X, is included with {\ParGAP}. Alternatively, an MPI
+library can be installed on your system before building {\ParGAP}. Two popular
+MPI implementations are:
+\beginlist
+\item{} MPICH2 \URL{http://www.mcs.anl.gov/research/projects/mpich2/}
+\item{} Open MPI \URL{http://www.open-mpi.org/}
+\endlist
+Both of these are compatible with Linux, Macs and Windows. Installation packages
+can be downloaded from their websites, or may be available through your systems
+standard package management mechanism.
+
+The MPINU library included with {\ParGAP} provides the MPI functionality that
+{\ParGAP} needs by using Unix sockets. This implementation is sufficient for
+basic {\ParGAP} usage, but does not scale to larger systems as well as the 
+alternative system libraries. It is better-suited to interative {\ParGAP} 
+sessions, since system MPI implementations can result in problems with line 
+editing in {\ParGAP}. When built with MPINU, {\ParGAP} also enables two 
+commands `ParReset()' and `FlushAllMsgs()' which can be useful when developing 
+parallel programs. See 
+Section~"Problems Running ParGAP with a System MPI Implementation" for details
+of these known issues with system MPI implementations. Two versions of MPINU
+are included with {\ParGAP}: the original MPINU and a newer version, called 
+MPINU2. 
+
+On Linux machines, we recommend that you use {\ParGAP} with a system MPI 
+implementation instead of MPINU, if possible. These implementations provide 
+better performance and fault tolerance, and are compatible with a wider range 
+of operating systems and hardware, including high speed networks and 
+proprietory high-end computing systems. 
+
+On Macs, we recommend using the original MPINU since there are currently some 
+problems running {\ParGAP} with both a system MPI implementation and MPINU2.
+Both these issues will hopefully be resolved in a future release.
+
+By default, the {\ParGAP} build process 
+(see Section~"Installing ParGAP") tries to use a system MPI implementation if 
+it can find one. If not, it will use MPINU. Two versions of MPINU are included 
+with this release of {\ParGAP}. The recommended choice is MPINU2, but the 
+original MPINU is included as a backup in case there are problems building or 
+running MPINU2.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Installing ParGAP}
 
 \index{installation}
 Installing {\ParGAP} should be relatively simple.  However,  since  there
 are many interactions both with the  {\GAP}  kernel  and  with  the  UNIX
 operating system, in a minority of cases,  manual  intervention  will  be
-necessary. If you are part of  this  minority,  please  see  the  section
-"Problems with Installation".  The  most  common  problem  is  the  local
-security policy; {\ParGAP} is more pleasant to use when you don't have to
-manually provide the password for each slave. See section "Problems  with
-Passwords (Getting Around Security)" for suggestions in this respect.
+necessary. If you are part of  this minority,  please  see  the  
+section~"Problems Installing or Invoking ParGAP". The most common problem 
+is the local security policy; {\ParGAP} is more pleasant to use when  you  
+don't have  to  manually  provide the password for  each  slave.  See  
+section~"Problems  with Passwords (Getting Around Security)" for  
+suggestions  in this respect.
 
 To install the {\ParGAP} package, move  the  file  `pargap-<XXX>.zoo'  or
 `pargap-<XXX>.tar.gz' (for some version number <XXX> of  {\ParGAP})  into
 the `pkg' directory in which you plan to install {\ParGAP}. Usually, this
-will be the directory `pkg' in the hierarchy of your version of  {\GAP}~4
+will be the directory `pkg' in the hierarchy of your version of  {\GAP}
 (in fact, currently it is  not  possible  to  have  the  `pkg'  directory
 separate from {\GAP}'s `pkg' directory; we hope to remedy this in  future
 versions of {\ParGAP} so that it will also possible to keep an additional
-`pkg' directory in your private directories; section "ref:Installing  GAP
-Packages" of the GAP 4 reference manual gives details on how to do  this,
+`pkg' directory in your private directories; section "ref:Installing a GAP Package" 
+of the GAP reference manual gives details on how to do  this,
 when it's possible.)
 
 Now change into  the  `pkg'  directory  in  which  you  plan  to  install
@@ -259,20 +315,27 @@ directory `pargap'. As for a generic {\GAP} package, do:
 
 \begintt
 cd pargap
-./configure ../..
+./configure
 make
 \endtt
 
-If your version of {\GAP} is earlier than {\GAP}~4.3 you will first  need
-to adjust {\GAP}'s `lib/init.g' file; see item~0.\  of  Section~"Problems
-with Installation".
+This builds the {\ParGAP} files. {\ParGAP} also needs to rebuild parts of 
+{\GAP} to enable the MPI hooks. It may also need to re-run the {\GAP} 
+`configure' if you have a dedicated MPI compiler. By default, the {\ParGAP}
+`configure' will prompt you to do this by hand if necessary, and then to 
+restart the {\ParGAP} build. If you are happy for the {\ParGAP} build process
+to run the {\GAP} `configure' for you if needed, with no arguments, then run 
+{\ParGAP}'s `configure' with
+\begintt
+./configure --with-basic-gap-configure
+\endtt
 
-Your {\ParGAP} should now be ready to use.  Now  read  the  next  section
-which decribes how to  run  {\ParGAP}  (if  you  are  reading  this  from
-{\GAP}'s on-line help, type: `?>').
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Section{Running ParGAP}
+The `configure' script will attempt to find a system MPI implementation that
+it can use. If if not then it will use MPINU2, the more recent of the two 
+MPINU subset implementations included with the {\ParGAP} package. You can use 
+the `--with-mpi=' configure option to specify a different behaviour, and you 
+can also set your own MPI compiler and options if you wish. See the help text 
+provided by  `./configure -h' for full details.
 
 After doing the `configure' and `make' steps of {\ParGAP}'s  installation
 process (see Section~"Installing ParGAP"), you should find in {\ParGAP}'s
@@ -283,14 +346,59 @@ pargap.sh
 \endtt
 
 which you should use to start {\ParGAP}. ({\ParGAP} can *not* be  started
-by starting {\GAP}~4 in the usual way, and using `RequirePackage';  doing
+by starting {\GAP}~4 in the usual way, and using `LoadPackage';  doing
 so will result in `Info'-ed  advice  to  read  this  section.)  Edit  the
 `pargap.sh' script if necessary, copy it to a standard path and rename it
 according to how you intend to call {\ParGAP} (e.g. rename it: `pargap').
-Also, in the `bin'  subdirectory  is  a  sample  `procgroup'  file  which
-defines the master and slave processes that will be  used  by  {\ParGAP}.
-When {\ParGAP} is started it looks for a file called `procgroup'  in  the
-current directory, unless the `-p4pg' option is used. Thus if you renamed
+
+*Note:*
+The script  `pargap.sh'  defines  the  program  that  runs  {\ParGAP}  as
+`pargapmpi'. In fact, after installation `pargapmpi' is a  symbolic  link
+to the {\GAP} binary named `gap'. The same binary runs  both  {\GAP}  and
+{\ParGAP}; when the binary is invoked as `gap' {\GAP} runs in  the  usual
+way without any parallel features; only when the  binary  is  invoked  as
+`pargapmpi'    are    the    parallel    features    incorporated.    See
+Section~"Modifying the GAP kernel" for more details.
+
+Your {\ParGAP} should now be ready to use.  Now  read  the  next  section
+which decribes how to  run  {\ParGAP}  (if  you  are  reading  this  from
+{\GAP}'s on-line help, type: `?>').
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Running ParGAP}
+
+After a successful build, you will see a message saying that {\ParGAP} is
+ready to use, and confirmation of whether a system MPI library or MPINU will 
+be used. The method of running {\ParGAP} depends on this MPI choice, and the 
+MPI library is auto-detected, or can be specified, in `configure', as 
+described in Section~"Installing ParGAP". The pros and cons of the two 
+different library variants are discussed in Section~"Choosing an MPI Library".
+
+We will assume that you have copied the `pargap.sh' script to a location
+on your search path and renamed it as `pargap', as suggested in 
+Section~"Installing ParGAP".
+
+*If you are using a system MPI library:*
+{\ParGAP} should be started using an MPI launcher script. The name and syntax
+of the command to start MPI processes can vary, and you should check your 
+system MPI documentation for details. However, one common launcher is 
+`mpiexec', and the following command should work with both Open MPI and MPICH,
+and most other MPI-2 implementations:
+
+\begintt
+mpiexec -n 3 pargap
+\endtt
+
+This will start three copies of the {\ParGAP}: one master and two slaves. These
+processes will all run on your local machine. See 
+Section~"Invoking ParGAP with Remote Slaves (when using a system MPI library)"
+for how to configure and run processes on remote slaves.
+
+*If you are using MPINU:*
+In {\ParGAP}'s `bin' subdirectory you should find a `procgroup' file which
+defines the master and slave processes that will be used  by  {\ParGAP}.
+When {\ParGAP} is started, the MPINU library looks for a file called `procgroup'  
+in the current directory, unless the `-p4pg' option is used. Thus if you renamed
 your shell script `pargap', the following  are  valid  ways  of  starting
 {\ParGAP}:
 
@@ -303,24 +411,15 @@ pargap
 \){\kernttindent}pargap -p4pg <myprocgroupfile>
 
 (where <myprocgroupfile> is the complete path of your  procgroup  file --
-there is no restriction on how you name it).
+there is no restriction on how you name it). The default `procgroup' file
+defines one master and two slaves on the local machine. For instructions of 
+how to run remote slaves, see 
+Section~"Invoking ParGAP with Remote Slaves (when using MPINU)".
 
-If you had trouble installing {\ParGAP}, see the  section~"Problems  with
-Installation". Otherwise continue onto Section~"Extended Example" and try
-out {\ParGAP}.
-
-*Note:*
-The script  `pargap.sh'  defines  the  program  that  runs  {\ParGAP}  as
-`pargapmpi'. In fact, after installation `pargapmpi' is a  symbolic  link
-to the {\GAP} binary named `gap'. The same binary runs  both  {\GAP}  and
-{\ParGAP}; when the binary is invoked as `gap' {\GAP} runs in  the  usual
-way without any parallel features; only when the  binary  is  invoked  as
-`pargapmpi'    are    the    parallel    features    incorporated.    See
-Section~"Modifying the GAP kernel" for more details.
-
-Now you are ready to test your  installation,  try  the  example  in  the
-following section (if you are reading this from  {\GAP}'s  on-line  help,
-type: `?>').
+If you had trouble installing or starting {\ParGAP}, see the 
+section~"Problems Installing or Invoking ParGAP". Otherwise you are ready 
+to test your installation, Try the example in the following section (if you 
+are reading this from  {\GAP}'s on-line help, type: `?>').
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Extended Example}
@@ -330,12 +429,15 @@ Section~"Running ParGAP" and try the example below (but  substitute  your
 own program where you see `"/home/gene/myprogram.g"').  The  commands  in
 this first example are also found in the `README' file. So, you may  wish
 to copy text from the `README' file and paste it into a `ParGAP' session.
-If you are using the unmodified `procgroup' file,  your  *remote  slaves*
+If you have not specified any additional machines to the MPI launcher, or you
+are using the unmodified `procgroup' file, then your *remote slaves*
 will be other processes on your local machine. It is a good idea  to  run
 only on your local machine for your first experiments and while  you  are
 debugging parallel programs. When  you  wish  to  experiment  with  using
-remote machines, you can then proceed to the following section, "Invoking
-ParGAP with Remote Slaves".
+remote machines, you can then proceed to 
+section~"Invoking ParGAP with Remote Slaves (when using a system MPI library)" 
+or section~"Invoking ParGAP with Remote Slaves (when using MPINU)" depending
+on which MPI library {\ParGAP} has been built to use.
 
 \atindex{example!Slave Listener}{@example!Slave Listener}
 \atindex{Slave Listener!example}{@Slave Listener!example}
@@ -364,40 +466,27 @@ gap> RecvMsg( 2 );
 gap> # The following is equivalent to the two previous commands.
 gap> SendRecvMsg( "3+4", 2);
 7
-gap> # Flush any messages that are pending. The response is
-gap> # the number of messages flushed. (Above, the two
-gap> # SendMsg("Print...") (to the default slave: 1) did not
-gap> # have a corresponding RecvMsg() command.)
-gap> FlushAllMsgs();
-2
+gap> # The two SendMsg() commands that were sent to Slave 1 earlier have
+gap> # responses that are waiting in the message queue from that slave.
+gap> # Check that there is a message waiting. With some MPI implementations
+gap> # the message is not immediately available, but when ProbeMsg() does
+gap> # return true then RecvMsg() is guaranteed to succeed. 
+gap> ProbeMsgNonBlocking( 1 );
+false
+gap> ProbeMsgNonBlocking( 1 );
+true
+gap> # Print() is a `no-value' functions, and so the result of a RecvMsg() 
+gap> # in both these cases is "<no_return_val>".
+gap> RecvMsg( 1 );
+"<no_return_val>"
+gap> RecvMsg( 1 );
+"<no_return_val>"
 gap> # As with Print() the result of Exec() appears on standard
-gap> # output. Print() and Exec() are each `no-value' functions,
-gap> # and so the result of a RecvMsg() in these cases
-gap> # is "<no_return_val>".
+gap> # output, and the result is "<no_return_val>".
 gap> SendRecvMsg( "Exec(\"pwd\")" ); # Your pwd will differ :-)
 /home/gene
 "<no_return_val>"
-gap> # Put default slave into an infinite loop.
-gap> SendMsg("while true do od");
-gap> # Default slave can't execute the next command until it's 
-gap> # finished with the previous command.
-gap> SendMsg("Print(\"WAKE UP\\n\")");
-gap> # Check to see if a message is waiting to be collected but
-gap> # return immediately (i.e. don't get blocked by waiting for
-gap> # a message to appear). A `false' response indicates the
-gap> # infinite loop hasn't terminated and produced a value yet!
-gap> ProbeMsgNonBlocking();
-false
-gap> # Send an interrupt to each slave, slave 1 will see the
-gap> # following command and print `WAKE UP', and then all
-gap> # pending messages are flushed.
-gap> ParReset();
-... resetting ...
-WAKE UP
-0
-gap> # The return value, 0, from ParReset() indicates there
-gap> # were 0 pending messages flushed, confirming correctness
-gap> # of ProbeMsgNonBlocking() when it returned "false"
+gap> # Define a variable on a slave
 gap> SendRecvMsg( "a:=45; 3+4", 1 );
 7
 gap> # Note "a" is defined on slave 1, not slave 2.
@@ -408,13 +497,6 @@ gap> RecvMsg( 2 ); # No value for last SendMsg() command
 "<no_return_val>"
 gap> RecvMsg( 1 );
 45
-gap> myfnc := function() return 42; end;;
-gap> # Use PrintToString() to define myfnc on all slave processes
-gap> BroadcastMsg( PrintToString( "myfnc := ", myfnc ) );
-gap> SendRecvMsg( "myfnc()", 1 );
-42
-gap> FlushAllMsgs(); # There are no messages pending.
-0
 gap> # Execute analogue of GAP's List() in parallel on slaves.
 gap> squares := ParList( [1..100], x->x^2 );
 [ 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 
@@ -426,6 +508,18 @@ gap> squares := ParList( [1..100], x->x^2 );
   5476, 5625, 5776, 5929, 6084, 6241, 6400, 6561, 6724, 6889, 7056, 
   7225, 7396, 7569, 7744, 7921, 8100, 8281, 8464, 8649, 8836, 9025, 
   9216, 9409, 9604, 9801, 10000 ]
+gap> # Send a large, local (non-remote) data structure to a slave
+gap> Concatenation("x := ", PrintToString([1..10]*2));
+"x := [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]\n\000"
+gap> SendMsg( Concatenation("x := ", PrintToString([1..10]*2)) ); 
+gap> RecvMsg();
+[ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
+gap> # Send a local (non-remote) function to a slave
+gap> myfnc := function() return 42; end;;
+gap> # Use PrintToString() to define myfnc on all slave processes
+gap> BroadcastMsg( PrintToString( "myfnc := ", myfnc ) );
+gap> SendRecvMsg( "myfnc()", 1 );
+42
 gap> # Ensure problem shared data is read into master and slaves.
 gap> # Try one of your GAP program files instead.
 gap> ParRead( "/home/gene/myprogram.g");
@@ -566,26 +660,101 @@ follows:
 \endtt
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Section{Invoking ParGAP with Remote Slaves}
+\Section{Invoking ParGAP with Remote Slaves (when using a system MPI library)}
 
-{\ParGAP}, unlike {\GAP}, must be invoked under a  separate  name.  After
-{\ParGAP} has been installed, a script  `bin/pargap.sh'  will  have  been
+{\ParGAP} can be built to use either a system MPI library, or the included
+MPINU library. The command to run {\ParGAP} is different in the two cases.
+If {\ParGAP} has been built using MPINU then you should skip this section
+and proceed to section~"Invoking ParGAP with Remote Slaves (using MPINU)".
+Otherwise, please read on.
+
+After {\ParGAP} has been installed, a script `bin/pargap.sh' will have been
 created  which   (after   any   changes   you   needed   to   make;   see
-Section~"Installing ParGAP") you should use to invoke {\ParGAP}. This  is
-similar  to  `<GAP_ROOT_DIR>/bin/gap.sh'  that  is  used  to  invoke  the
-non-parallel {\GAP}. Installers are encouraged to  treat  `pargap.sh'  in
-analogy to `gap.sh'. For example, if your site  has  copied  `gap.sh'  to
-`/usr/local/bin/gap', then you  should  also  look  for  the  `pargap.sh'
-script as `/usr/local/bin/pargap'.
+Section~"Installing ParGAP") you should use to invoke {\ParGAP}. Installers 
+are encouraged to treat `pargap.sh' in analogy to `gap.sh'. For example, if 
+your site  has  copied  `gap.sh'  to `/usr/local/bin/gap', then you should
+also look for the `pargap.sh' script as `/usr/local/bin/pargap'. It simplifies
+the remoste slave configuration if {\ParGAP} can be found on the standard
+path on each machine, and we'll assume that in this section {\ParGAP} can
+be invoked simply as `pargap'.
 
-In addition, when `pargap' (we'll assume that's how {\ParGAP} is  invoked
-at your site) is called, there  must  be  a  file,  `procgroup',  in  the
-current directory,  or  alternatively,  if  you  wish  to  use  a  single
-procgroup file for all jobs, and that procgroup file is  in  `/home/joe',
-then you can alias `pargap' to `pargap -p4pg /home/joe/procgroup'.
+When built with a system MPI installation, {\ParGAP} must be invoked using
+the system's MPI launcher. This may go under several names, but the command
+name `mpiexec' is suggested in the MPI-2 specification, and is supported by 
+both Open MPI and MPICH, two common implementations of that specification.
 
-The  procgroup  file  has  a  simple  syntax,  taken   from   the   MPICH
-implementation of MPI (inherited from P4). A `\#' in column~1  introduces
+The basic usage is
+
+\){\kernttindent}mpiexec -n <num> pargap
+
+to launch `<num>' copies of {\ParGAP} (i.e. one master and $(num-1)$ slaves). 
+With no other parameters, these will all be launched on the host machine.
+
+A configuration file can be used to specify hosts for remote slaves. The
+syntax of this file different for Open MPI and MPICH, but in both cases 
+the configuration file is a text file listing the host names
+and the number of processes to run on each host, one per line. The default 
+number of processes per node is one by default.
+
+When using Open MPI, an example <hostfile> is
+\begintt
+# Example Open MPI hostfile.  Comments begin with #
+#
+# The following node is a single processor machine:
+foo.example.com
+# The following two nodes are dual-processor machines:
+bar.example.com slots=2
+yow.example.com slots=2
+\endtt
+This hostfile is passed to `mpiexec' using
+
+\){\kernttindent}mpiexec -n <num> -hostfile <hostfile> pargap
+
+Processes are allocated round-robin style. For example, if we choose <num> to
+be seven then the first process (the master) will run on `foo'. The
+slaves will run two on `bar', two on `yow' and a further one each on `foo' and
+`bar'. 
+
+When using MPICH, the equivalent <machinefile> is
+\begintt
+# Example MPICH machinefile.  Comments begin with #
+#
+# The following node is a single processor machine:
+foo.example.com
+# The following two nodes are dual-processor machines:
+bar.example.com:2
+yow.example.com:2
+\endtt
+and the command to start {\ParGAP} using these hosts will be 
+
+\){\kernttindent}mpiexec -n <num> -machinefile <machinefile> pargap
+
+For further information, such as specifying hosts on the command line, or finer
+control of how processes are distributed between hosts, or if you have a 
+different MPI implementation, then please see your MPI documentation.
+
+Unless you have any problems with the installation or running ParGAP,
+you can skip the rest of this chapter and move on to Chapter~"Slave Listener".
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Invoking ParGAP with Remote Slaves (when using MPINU)}
+
+If {\ParGAP} has been built to use the supplied MPINU library then
+{\ParGAP} includes the facility (on Linux) to start up and manage 
+remove slaves without needing an external MPI launcher. If {\ParGAP} is 
+built using a system MPI library then please read to 
+section~"Invoking ParGAP with Remote Slaves (when using a system MPI library)"
+instead. 
+
+We'll assume that when {\ParGAP} was built the scipt `bin/pargap.sh' was
+copied to `/usr/local/bin/pargap' (see Section~"Installing ParGAP").
+{\ParGAP} can then be run by calling `pargap'. In addition, there  must  be  
+a file, `procgroup', in the current directory, or alternatively, if you wish
+to use a single procgroup file for all jobs, and that procgroup file is in  
+`/home/joe', then you can alias `pargap' to `pargap -p4pg /home/joe/procgroup'.
+
+The  procgroup  file  has  a  simple  syntax,  taken from the MPICH 
+(not MPICH2) implementation of MPI. A `\#' in column~1  introduces
 a comment line. The first non-comment line should be `local 0', verbatim.
 This line declares the master process as the local process.  Other  lines
 are of the form:
@@ -620,33 +789,29 @@ MPI will use a line
 
 to create a UNIX subprocess executing:
 
-\){\kernttindent}rsh <host-machine> <pargap-script>
+\){\kernttindent}ssh <host-machine> <pargap-script>
 
 Suppose <host-machine> is `regulus.ccs.neu.edu'  and  <pargap-script>  is
 `/usr/local/bin/pargap' as in the above example,  and  we  were  to  have
 trouble invoking {\ParGAP}, then it would be a good idea to try  invoking
-`rsh regulus.ccs.neu.edu' from a UNIX prompt and  if  that  succeeds,  to
-then try executing the full `rsh' command.
+`ssh regulus.ccs.neu.edu' from a UNIX prompt and  if  that  succeeds,  to
+then try executing the full `ssh' command.
 
 A typical problem is that the remote processor  requires  a  password  to
-login.   MPI   requires   a   login   without    passwords.    Typically,
-`/etc/hosts.equiv' has not been set up to remove the password requirement
-for your remote host. Sometimes this can  be  solved  by  an  appropriate
-`.rhosts' file in your home directory on the remote host. Sometimes,  PAM
-is also used for user authentication (see `/etc/pam.conf'). `man in.rshd'
-also has helpful information.  Consult  your  system  staff  for  further
-analysis. In these days of hyper-security, `rsh' may be disabled at  your
-site and you may have to use `ssh' instead; if so, there  is  a  solution
-here: add the lines
+login.   MPI   requires   a   login   without    passwords.    This   can
+be set up for `ssh'.  See `man ssh'. Sometimes, PAM is also used for user
+authentication (see `/etc/pam.conf').  Consult  your  system  staff   for
+further analysis. If your site uses an alternative to `ssh', there  is  a
+solution here: add the lines
 
 \begintt
 #############################################################################
 ##
-##  RSH . . . .. . . . . . . . . . . . . . . . .  remote shell used by ParGAP
+##  SSH . . . .. . . . . . . . . . . . . . . . .  remote shell used by ParGAP
 ##
 ##
-RSH=ssh
-export RSH
+SSH=myssh
+export SSH
 \endtt
 
 before the `GAP' block with the `exec' line. (Of course, the  `\#'  lines
@@ -664,35 +829,23 @@ gap> SendMsg("Exec(\"hostname\")", 2);
 will execute and print from the remote process.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Section{Problems with Installation}
+\Section{Problems Installing or Invoking ParGAP}
 
-If you still have problems, here is a list of things to check.
+If you still have problems, here is a list of things to check. This section
+considers general problems when installing or running {\ParGAP}. The two 
+sections after this one consider problems specific to using MPINU or a system
+MPI library respectively.
 
 \beginlist
 \item{0.}
-    In  versions  of  {\GAP}  earlier  than  {\GAP}~4.3  some   {\ParGAP}
-    ``hooks'' need to be added to {\GAP}'s `lib/init.g' file. Please add:
+    If you are using {\ParGAP} on a Mac with MPINU2 or a system MPI 
+    implementation then {\ParGAP} may consistently crash on startup. If this
+    is the case then try using MPINU instead by reconfiguring {\ParGAP} with
 
-\begintt
-PAR_GAP_SLAVE_START := fail;
-\endtt
-
-\item{}
-    before the line:
-
-\begintt
-       READ(GAP_RC_FILE);
-\endtt
+\){\kernttindent}./configure --with-mpi=MPINU
 
 \item{}
-    and add:
-
-\begintt
-if PAR_GAP_SLAVE_START <> fail then PAR_GAP_SLAVE_START(); fi;
-\endtt
-
-\item{}
-    at the end of the file.
+    This is a known issue which will be fixed in a forthcoming version.
 
 \item{1.}
     Do you have enough swap space to support multiple {\GAP} processes? A
@@ -705,7 +858,7 @@ if PAR_GAP_SLAVE_START <> fail then PAR_GAP_SLAVE_START(); fi;
 \begintt
 pkg/pargap/bin/pargap.sh
 \endtt
-       
+
 \item{}
     and copy the parameters from `<GAP_ROOT>/bin/gap.sh'. <GAP_ROOT>  was
     specified when  you  executed  `./configure  <GAP_ROOT>'  to  install
@@ -715,66 +868,25 @@ pkg/pargap/bin/pargap.sh
     `.../pkg/pargap/bin/pargap.sh'?
 
 \item{3.}
-    Did {\ParGAP} find your `procgroup' file?
-    [It looks in the current directory for `procgroup', or for:
-
-\){\kernttindent}... -p4pg <PATH>/procgroup
-
-\item{}
-    on the command line.]
-
-\item{4.}
     Were the remote slave processes able to start up? If so,  could  they
     connect back to  the  master?  To  test  connectivity  problems,  try
     manually starting a remote slave by executing a line in  the  script.
-    Try a simple `rsh <remote-hostname>' to see  if  the  issue  is  with
-    security. If your site uses `ssh' instead of `rsh', then there  is  a
+    Try a simple `ssh <remote-hostname>' to see  if  the  issue  is  with
+    security. If your site uses `ssh' instead of `ssh', then there  is  a
     security issue. Read Section~"Problems with Passwords (Getting Around
     Security)", and possibly `man sshd'.
 
-\item{5.}
+\item{4.}
     If  the  previous  step  failed  due  to  security  issues,  such  as
-    requesting a password, you have several options. `man rshd' tells you
-    the security model at your site (or possibly `man  ssh'  if  you  use
-    that). Then read Section~"Problems  with  Passwords  (Getting  Around
-    Security)".
+    requesting a password, you have several options. `man ssh' tells  you
+    the security model at your site.  Then read Section~"Problems with
+    Passwords (Getting Around Security)".
 
-\item{6.}
-    Is the `procgroup' file in your current directory set correctly?
-    Test it.  If you are calling it on a remote host, manually type:
-
-\){\kernttindent}rsh <HOSTNAME> <ParGAP>
-
-\item{}
-    where <HOSTNAME> and <ParGAP> appear exactly as in `procgroup', e.g.
-    
-\){\kernttindent}rsh denali.ccs.neu.edu /usr/local/gap4r3/bin/pargap.sh
-
-\item{}
-    In some cases, `exec' is used to save process overhead. Also try:
-
-\){\kernttindent}rsh <HOSTNAME> exec <ParGAP>
-
-\item{}
-    If you plan to call it on localhost, try just:   <ParGAP>
-
-\item{}
-    Note that if not all the slave processes succeed in connecting
-    to the master, then {\ParGAP} writes out a file:
-
-\begintt
-/tmp/pargapmpi--rsh.$$
-\endtt
-       
-\item{}
-    where `\$\$' is replaced by the  the  process  id  of  the  {\ParGAP}
-    process.
-
-\item{7.}
+\item{5.}
     Is `pargap' listed in `.../pkg/ALLPKG'?
     [It's needed to autostart slaves.]
 
-\item{8.}
+\item{6.}
     Inside {\ParGAP}, has MPI been successfully initialized?
     Try:  
     
@@ -782,7 +894,7 @@ pkg/pargap/bin/pargap.sh
 gap> MPI_Initialized();
 \endexample
 
-\item{9.}
+\item{7.}
     A remote (slave) {\ParGAP} process starts in your home directory  and
     tries to `cd'  to  a  directory  of  the  same  name  as  your  local
     directory. Check your assumptions about the remote machine. Try:
@@ -792,7 +904,72 @@ gap> SendRecvMsg("Exec(pwd)"); SendRecvMsg("UNIX_Hostname()");
 gap> SendRecvMsg("UNIX_Getpid()");
 \endexample
 
-\item{10.}
+\item{8.}
+    Every {\ParGAP} slave process displays its {\GAP} banner and startup 
+    messages on the terminal of the master process. If you have many slaves
+    and do not wish to see these messages, then pass the `-b' and/or `-q' 
+    switches to {\ParGAP} when it starts, to disable the banner or all messages
+    respectively. See Section~"Ref:Command Line Options" of the GAP Reference
+    Manual for further details.
+
+\item{9.}
+    Read the documentation for further possible problems.
+
+\endlist
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Problems Running ParGAP with MPINU}
+
+If you have problems running {\ParGAP}, and {\ParGAP} is built to use the 
+supplied MPINU library, then this section lists some things to check, in 
+addition to the general issues listed in the previous section. If you are
+using a system MPI implementation instead of MPINU, this section can be 
+ignored, but you should read the next section instead.
+
+
+\beginlist
+\item{1.}
+    Did {\ParGAP} find your `procgroup' file?
+    [It looks in the current directory for `procgroup', or for:
+
+\){\kernttindent}... -p4pg <PATH>/procgroup
+
+\item{}
+    on the command line.]
+
+\item{2.}
+    If you are using MPINU, is the `procgroup' file in your current directory 
+    set correctly? Test it. If you are calling it on a remote host, manually 
+    type:
+
+\){\kernttindent}ssh <HOSTNAME> <ParGAP>
+
+\item{}
+    where <HOSTNAME> and <ParGAP> appear exactly as in `procgroup', e.g.
+    
+\){\kernttindent}ssh denali.ccs.neu.edu /usr/local/gap4r3/bin/pargap.sh
+
+\item{}
+    In some cases, `exec' is used to save process overhead. Also try:
+
+\){\kernttindent}ssh <HOSTNAME> exec <ParGAP>
+
+\item{}
+    If you plan to call it on localhost, try just:   <ParGAP>
+
+\item{}
+    Note that if not all the slave processes succeed in connecting
+    to the master, then {\ParGAP} writes out a file:
+
+\begintt
+/tmp/pargapmpi-ssh.xx
+\endtt
+       
+\item{}
+    where `xx' is replaced by the  the  process  id  of  the  {\ParGAP}
+    process.
+
+\item{3.}
     If the connection dies at random, after some period of time:
     You can experiment with `SO_KEEPALIVE' and variants.  
     (See `man setsockopt'.)
@@ -804,23 +981,16 @@ gap> SendRecvMsg("UNIX_Getpid()");
     `ssh' specifies `KeepAlive yes' by default, but setting `KeepAlive no'
     might get you through some transient lapses in  connectivity  due  to
     high congestion. 
-    You may also want to experiment with: `setenv RSH "rsh -n"'
+    You may also want to experiment with: `setenv SSH "ssh -n"'
 
-\item{11.}
-    Read the documentation for further possible problems.
-
-\endlist
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\Section{Problems with Hosts on Multiple Networks}
-
-If a host is on multiple networks, it will have multiple IP addresses and
-usually multiple hostnames. In  this  case,  the  master  process  cannot
-always guess correctly which IP address (which internet  address)  should
-be passed to the slave process, so that the slave process can  call  back
-to the master. In such cases,  you  may  need  to  tell  {\ParGAP}  which
-hostname or IP address to use for the callback. This is done  by  setting
-the UNIX environment variable, `CALLBACK_HOST', as in the example below.
+\item{4.}
+    If a host is on multiple networks, it will have multiple IP addresses and
+    usually multiple hostnames. In  this  case,  the  master  process  cannot
+    always guess correctly which IP address (which internet  address)  should
+    be passed to the slave process, so that the slave process can  call  back
+    to the master. In such cases,  you  may  need  to  tell  {\ParGAP}  which
+    hostname or IP address to use for the callback. This is done  by  setting
+    the UNIX environment variable, `CALLBACK_HOST', as in the example below.
 
 \begintt
 # [ in sh/bash/... ]
@@ -829,42 +999,129 @@ CALLBACK_HOST=denali.ccs.neu.edu; export CALLBACK_HOST
 setenv CALLBACK_HOST=denali.ccs.neu.edu
 \endtt
 
-The appropriate  line  for  your  shell  can  be  placed  in  your  shell
-initialization file. Alternatively, you can set this up for all users  by
-placing the Bourne shell version (for `sh') somewhere between  the  first
-and last line of `.../pkg/pargap/bin/pargap.sh'.
+\item{}
+    The appropriate  line  for  your  shell  can  be  placed  in  your  shell
+    initialization file. Alternatively, you can set this up for all users  by
+    placing the Bourne shell version (for `sh') somewhere between  the  first
+    and last line of `.../pkg/pargap/bin/pargap.sh'.
+
+\item{5.}
+    {\ParGAP} is supplied with two different versions of MPINU: the original
+    MPINU and a later version, MPINU2, and it will also work with other MPI
+    libraries if they are present on your system. By default, if you do
+    not have a system MPI implementation then MPINU2 is used. If you have 
+    problems which appear to be MPI-related, try rebuilding {\ParGAP} with a 
+    different MPI library. For example, to use MPINU instead of MPINU2 then
+    run configure using
+\begintt
+./configure --with-mpi=MPINU
+\endtt
+
+\endlist
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Problems Running ParGAP with a System MPI Implementation}
+
+Here are a list of known issues when using a system MPI library with {\ParGAP}, 
+and some solutions or workarounds. Not all of these issues will manifest 
+themselves on all architectures and all MPI implementations. If you are having 
+problems building or running {\ParGAP}, you should check this section as well as 
+Section~"Problems Installing or Invoking ParGAP"
+
+\beginlist
+\item{1.}
+  Line editing at the GAP command prompt is unlikely to work when {\ParGAP} is
+  invoked with an MPI launcher, since they tend to do their own processing 
+  of the terminal I/O (stdin/stdout/stderr) which does not work well 
+  either the readline library used in newer versions of {\GAP} or the in-built
+  terminal editing in earlier versions of {\GAP}. It may be useful to run
+  {\ParGAP} through the `rlwrap' utility, if available. For example, if 
+  {\ParGAP} is run using `mpiexec', then try
+
+\begintt
+rlwrap mpiexec -n 3 pargap
+\endtt
+
+\item{}
+  This should restore some of the line editing, although tab completion is 
+  limited to commands that `rlwrap' has already seen you use. For more 
+  information, try `man rlwrap'.
+
+\item{2.}
+  The command `FlushAllMsgs()' (see~"FlushAllMsgs") is not available 
+  when using a system MPI implementation, since it tests show that 
+  `ProbeMsgNonBlocking()', which it uses (see~"ProbeMsgNonBlocking") cannot be 
+  relied upon to always return `true' the first time that it is called after a
+  message has been sent. If your system MPI implementation does exhibit this 
+  desired behaviour for `ProbeMsgNonBlocking()' then you can install your own
+  local copy of `FlushAllMsgs()' by copying the code for this function from 
+  `lib/slavelist.g', removing the `if' statement and renaming the function.
+
+\item{3.}
+  The command `ParReset()' (see~"ParReset") is not available when using a
+  system MPI implementation. When using a MPINU library, the slaves are launched
+  by {\ParGAP} itself and so can be contacted and restarted, but with a system
+  MPI library the slaves are launched by `mpiexec' (or whichever MPI launcher
+  you use) and so cannot be reset from within {\ParGAP}. There is no known
+  workaround for this.
+
+\item{4.}
+  {\GAP} and, in particular, the \package{IO} Package install handlers for the 
+  SIGCHLD signal. Many implementations of MPI also install their own SIGCHLD 
+  handler, which may then conflict with {\ParGAP}. Testing has revealed no 
+  issues, but we cannot guarantee that there will be no interaction between the 
+  two. In particular, this may result in temporary files not being cleaned up 
+  properly.
+
+\item{5.}
+  The {\GAP} memory manager, GASMAN, can run into problems extending the 
+  {\GAP} workspace if external libraries use `malloc' to allocate their own
+  memory. MPINU avoids the use of `malloc' as much as possible, but
+  system MPI implementations may not be as careful. This can be resolved by
+  starting {\ParGAP} with the `-s' command-line switch, which asks
+  {\ParGAP} to pre-allocate memory before it starts. You can safely 
+  pre-allocate more memory than you will actually need since physical memory
+  will only be mapped when it is actually used, so for example you could 
+  allocate 3Gb:
+\begintt
+mpiexec -n 3 pargap -s 3g
+\endtt
+  The `-a' and `-m' switches can also be used to control memory usage. See 
+  Section~"Ref:Command Line Options" of the GAP Reference Manuel for 
+  further information.
+\endlist
+
+News of any other issues or solutions would be gratefully accepted.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Problems with Passwords (Getting Around Security)}
 
 There is a simple test to see if you need to read this  section.  Pick  a
-remote machine, <HOSTNAME>, that you wish to execute on, and  type:  `rsh
+remote machine, <HOSTNAME>, that you wish to execute on, and  type:  `ssh
 <HOSTNAME>'. If this did not work, also try `ssh <HOSTNAME>'. If you were
 asked for your password, then you and your system administrator may  need
-to talk about security policy. If you were successful with `ssh' and  not
-with `rsh' then set the environment variable, `RSH', to the value  `ssh',
-as described in item~3 below.
+to talk about security policy. If you were successful with an alternative
+to `ssh' then  set  the environment  variable, `SSH', to  the alternative
+value, as described in item~3 below.
 
 \beginlist
 \item{(1)}
-    Ask your systems administrator to put the machines in a `hosts.equiv'
-    file, so that logging in from one to the other  does  not  require  a
-    password. (`man hosts.equiv')
+    Add a `.shosts' file to your home directory (for `ssh').
 
 \item{(2)}
-    Add a `.rhosts' file to your home directory (or `.shosts' for `ssh').
-
-\item{(3)}
-    Hack around the problem: By default, the startup script uses `rsh' to
-    start remote processes. However, if the  environment  variable  `RSH'
+    Hack around the problem: By default, the startup script uses `ssh' to
+    start remote processes. However, if the  environment  variable  `SSH'
     was set, the script  uses  the  value  of  the  environment  variable
-    instead of `rsh'. This may be useful, if you have  your  own  script,
-    `myrsh', that automatically gets around  the  security  issues.  Then
+    instead of `ssh'. This may be useful, if you have  your  own  script,
+    `myssh', that automatically gets around  the  security  issues.  Then
     just type:
 
 \begintt
-RSH=myrsh; export RSH  # [ in sh/bash/... ]
-setenv RSH myrsh       # [ in csh/tcsh/... ]
+SSH=myrsh; export SSH  # [ in sh/bash/... ]
+setenv SSH myrsh       # [ in csh/tcsh/... ]
 \endtt
 
 \item{}
@@ -874,7 +1131,7 @@ setenv RSH myrsh       # [ in csh/tcsh/... ]
     first and last line of `.../pkg/pargap/bin/pargap.sh'.  (The  example
     for `ssh' was given earlier.)
 
-\item{(4)}
+\item{(3)}
     `ssh': `man ssh' mentions some possibilities for giving the  password
     the first time, and then having ssh remember that  future  logins  to
     that machine are authorized for the duration of  the  session.  Don't
@@ -883,11 +1140,11 @@ setenv RSH myrsh       # [ in csh/tcsh/... ]
     parameters of interest  might  be  `KeepAlive',  `RSAAuthentication',
     `UseRsh'. You may also find useful information in `man sshd'.
 
-\item{(5)}
+\item{(4)}
      After starting {\ParGAP}, manually call
 
 \begintt
-/tmp/pargapmpi--rsh.$$
+/tmp/pargapmpi-ssh.$$
 \endtt
 
 \item{}
@@ -898,6 +1155,8 @@ setenv RSH myrsh       # [ in csh/tcsh/... ]
     else will find out your password.
 
 \endlist
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \Section{Modifying the GAP kernel}

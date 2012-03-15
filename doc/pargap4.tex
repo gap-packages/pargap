@@ -2,7 +2,7 @@
 %%
 %W  pargap4.tex            ParGAP documentation            Gene Cooperman
 %%
-%H  $Id: pargap4.tex,v 1.5 2001/07/28 23:49:06 gap Exp $
+%H  $Id$
 %%
 %Y  Copyright (C) 1999-2001  Gene Cooperman
 %Y    See included file, COPYING, for conditions for copying
@@ -14,13 +14,16 @@
 \atindex{tutorial!MasterSlave()}{@tutorial!MasterSlave()}
 This chapter assumes the background  knowledge  in  section~"Basic  TOP-C
 (Master-Slave) commands". {\ParGAP} must be invoked through a script like
-`pargap.sh'  generated  in  {\ParGAP}'s  `bin'  during  installation.  In
-addition, there must be a `procgroup' file in the current directory  when
-{\ParGAP} is called, or alternatively, `-p4pg <FULL_PATH>/procgroup'  may
-be included on the `pargap.sh' command line. See Section~"Running ParGAP"
-for the details. You should find a sample `procgroup' file in {\ParGAP}'s
-`bin'   directory   after   installation   of    {\ParGAP}.    See    the
-section~"Invoking ParGAP with Remote Slaves" for further details. Many of
+`pargap.sh'  generated  in  {\ParGAP}'s  `bin'  during  installation.  
+If using a system MPI library, this script must be invoked using an MPI
+launcher. Alternatively MPINUI is being used instead, then the script can
+be called directly, and there must be a `procgroup' file in the current 
+directory  when {\ParGAP} is called, or the location of such a file provided
+on the command line. See Section~"Running ParGAP"
+for general information, and then Sections~"Invoking ParGAP with Remote Slaves 
+(when using a system MPI library)" and "Invoking ParGAP with Remote Slaves 
+(when using MPINU)" for specific details of running remote slaves with
+a system MPI library and MPINU respectively. Many of
 the examples of this section  can  be  found  in  {\ParGAP}'s  `examples'
 directory.
 

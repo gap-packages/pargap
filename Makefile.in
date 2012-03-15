@@ -1,82 +1,127 @@
-default: compile @PWD@/bin/pargap.sh @GAPPATH@/bin/@GAPARCH@
-	echo "DONE"
-	@ if [ ! -d @GAPPATH@/bin/@GAPARCH@ ]; then \
+SHELL=@SHELL@
+VPATH=@srcdir@
+abs_builddir=@abs_builddir@
+builddir=@builddir@
+gappath=@GAPPATH@
+gaparch=@GAPARCH@
+mpinudir=$(srcdir)/@MPINUDIR@
+srcdir=@builddir@
+
+default: compile $(builddir)/bin/pargap.sh $(gappath)/bin/$(gaparch)
+	@ echo "DONE"
+	@ if [ ! -d $(gappath)/bin/$(gaparch) ]; then \
 	  echo ""; \
-	  echo "WARNING:  Directory, @GAPPATH@/bin/@GAPARCH@, not found."; \
+	  echo "WARNING:  Directory, $(gappath)/bin/$(gaparch), not found."; \
 	  echo "Please check dirs in:  @PWD@/bin/pargap.sh."; \
 	fi;
 
-@PWD@/bin/pargap.sh: @GAPPATH@/bin/gap.sh
-	( cd @GAPPATH@/bin/@GAPARCH@; \
-	  rm -f pargapmpi; ln -s gap pargapmpi )
-	( cd @GAPPATH@/bin; rm -f pargap.sh; \
-	  chmod a+x gap.sh; \
-	  echo "#!/bin/sh" > pargap.sh; \
-	  echo "# THIS FILE GENERATED AUTOMATICALLY BY:" >> pargap.sh; \
-	  echo "#       @PWD@/Makefile" >> pargap.sh; \
-	  echo "#" >> pargap.sh; \
-	  sed -e '/GAP_PRG=.*gap$$/ s#/gap$$#/pargapmpi#g' gap.sh >> \
-	        pargap.sh; \
-	  chmod a+x pargap.sh; \
-	  rm -f @PWD@/bin/pargap.sh; \
-	  mv pargap.sh @PWD@/bin/; \
+$(builddir)/bin/pargap.sh: $(gappath)/bin/gap.sh
+	( cd $(gappath)/bin/$(gaparch) && \
+	  rm -f pargapmpi && \
+	  ln -s gap pargapmpi )
+	( cd $(gappath)/bin && \
+	  rm -f pargap.sh && \
+	  chmod a+x gap.sh && \
+	  echo "#!/bin/sh" > pargap.sh && \
+	  echo "# THIS FILE GENERATED AUTOMATICALLY BY:" >> pargap.sh && \
+	  echo "#       @srcdir@/Makefile" >> pargap.sh && \
+	  echo "#" >> pargap.sh && \
+	  @SED@ -e '/GAP_PRG=.*gap$$/ s#/gap$$#/pargapmpi#g' gap.sh >> pargap.sh && \
+	  chmod a+x pargap.sh && \
+	  rm -f $(abs_builddir)/bin/pargap.sh && \
+	  mv pargap.sh $(abs_builddir)/bin/ \
 	)
+	@ echo ""
+	@ echo "*** ParGAP is ready."
+	@ echo ""
+        ifeq (@USE_MPINU@, )
+		@ echo "*** ParGAP has been built using your system MPI implementation."
+		@ echo ""
+		@ echo "*** See section 1.3 of the ParGAP manual for how to run ParGAP."
+		@ echo "*** To try it now, execute bin/pargap.sh using your MPI launcher."
+		@ echo "*** For example, the following may work:  mpiexec -n 3 bin/pargap.sh"
+		@ echo ""
+        else
+          ifeq (@MPINU_V2@, )
+		@ echo "*** ParGAP has been built using MPINU."
+		@ echo ""
+		@ echo "*** See section 1.3 of the ParGAP manual for how to run ParGAP."
+		@ echo "*** To try it now, do:  cd bin; ./pargap.sh"
+		@ echo ""
+          else
+		@ echo "*** ParGAP has been built using MPINU2."
+		@ echo ""
+		@ echo "*** See section 1.3 of the ParGAP manual for how to run ParGAP."
+		@ echo "*** To try it now, do:  cd bin; ./pargap.sh"
+		@ echo ""
+          endif
+        endif
 
-#HACK:  @PWD@/ needed when making gapmpi.o below.  When that goes away,
-#  @PWD@/ can go away.
-# Also, copying gapmpi.c into @GAPPATH@/src/ for backward compatibility
-#   with an old Makegap.in
-@GAPPATH@/src/gapmpi.c @GAPPATH@/src/gapmpi.h: \
-	    @PWD@/src/gapmpi.c @PWD@/src/gapmpi.h
-	cp @PWD@/src/gapmpi.c @PWD@/src/gapmpi.h @GAPPATH@/src/
+$(gappath)/src/gapmpi.c $(gappath)/src/gapmpi.h: $(srcdir)/src/gapmpi.c $(srcdir)/src/gapmpi.h
+	cp $(srcdir)/src/gapmpi.c $(srcdir)/src/gapmpi.h $(gappath)/src/
 
-# @GAPPATH@/lib/masslave.g @GAPPATH@/lib/slavelist.g: \
-#		lib/masslave.g lib/slavelist.g
-#	cp lib/masslave.g lib/slavelist.g @GAPPATH@/lib/
+$(builddir)/bin/$(gaparch)/libmpi.a: $(mpinudir)/*.c
+	( cd $(mpinudir) && make clean && make libmpi.a )
+	if [ ! -d $(builddir)/bin/$(gaparch) ];  then mkdir -p $(builddir)/bin/$(gaparch);  fi
+	mv $(mpinudir)/libmpi.a $(builddir)/bin/$(gaparch)/libmpi.a
 
-bin/@GAPARCH@/libmpi.a: mpinu/*.c
-	( cd mpinu; make clean; make libmpi.a )
-	if [ ! -d bin/@GAPARCH@ ];  then mkdir bin/@GAPARCH@;  fi
-	mv mpinu/libmpi.a bin/@GAPARCH@/libmpi.a
-
-compile: bin/@GAPARCH@/libmpi.a @GAPPATH@/src/gapmpi.c \
-	  @GAPPATH@/src/gapmpi.h @PWD@/lib/masslave.g @PWD@/lib/slavelist.g
-	( cd @GAPPATH@/bin/@GAPARCH@ ; \
-	  rm -f gap.o; \
+compile: $(gappath)/src/gap.c $(gappath)/src/gapmpi.c @LIBMPINU@ \
+	   $(gappath)/src/gapmpi.h $(srcdir)/lib/masslave.g $(srcdir)/lib/slavelist.g \
+	   $(gappath)/Makefile Makefile
+	( cd $(gappath) && \
+	  rm -f $(builddir)/bin/$(gaparch)/gap.o && \
 	  $(MAKE) \
 	    COPTS="$(COPTS) -DGAPMPI -DPARGAPMPI -DPARGAP" \
-	    MPILIBS="@PWD@/bin/@GAPARCH@/libmpi.a @SOCKETLIBS@" \
-	    MPIINCLUDEDIR=@PWD@/mpinu/. \
-	    GAPMPI_OBJ=gapmpi.o ; \
-	    rm -f gap.o ; \
+	    MPILIBS="@MPI_LIBS@" \
+	    MPI_CFLAGS="@MPI_CFLAGS@" \
+	    GAPMPI_OBJ=gapmpi.o  && \
+	    rm -f bin/$(gaparch)/gap.o \
 	)
 	# If successful:
-	if [ ! -f @PWD@/../ALLPKG ] ; then \
-	  echo "" > @PWD@/../ALLPKG; \
+	if [ ! -f $(builddir)/../ALLPKG ] ; then \
+	  echo "" > $(builddir)/../ALLPKG; \
 	fi
-	if ( grep '^pargap$$' @PWD@/../ALLPKG > /dev/null ); then echo ""; \
-	else echo "pargap" >> @PWD@/../ALLPKG; \
+	if ( grep '^pargap$$' $(builddir)/../ALLPKG > /dev/null ); then \
+	  echo ""; \
+	else \
+	  echo "pargap" >> $(builddir)/../ALLPKG; \
 	fi
 
 clean:
-	rm -f @GAPPATH@/bin/@GAPARCH@/pargap
-	rm -f @GAPPATH@/bin/@GAPARCH@/pargapmpi
-	rm -f @GAPPATH@/bin/@GAPARCH@/gapmpi
-	rm -f bin/pargapmpi.sh
-	rm -f bin/pargap.sh
-	rm -f bin/gapmpi.sh
-	rm -f bin/@GAPARCH@/libmpi.a
-	if [ -d bin/@GAPARCH@ ];  then rmdir bin/@GAPARCH@;  fi
-	for file in bin/* ; do \
-	  if [ -d $$file ]; then rm -ir $$file; fi; \
-        done
-	( cd mpinu; make clean )
+	-rm -f $(gappath)/bin/$(gaparch)/pargap
+	-rm -f $(gappath)/bin/$(gaparch)/pargapmpi
+	-rm -f $(gappath)/bin/$(gaparch)/gapmpi
+	-rm -f $(gappath)/bin/$(gaparch)/gapmpi.o
+	-rm -f $(gappath)/src/gapmpi.c $(gappath)/src/gapmpi.h
+	-rm -f $(builddir)/bin/pargapmpi.sh
+	-rm -f $(builddir)/bin/pargap.sh
+	-rm -f $(builddir)/bin/gapmpi.sh
+	-rm -f -r $(builddir)/bin/$(gaparch)
+	if [ -f $(mpinudir)/mpi.h ]; then \
+		( cd $(mpinudir) && make clean ); \
+	fi
 
 distclean: clean
-	rm -f bin/procgroup
-	rm -f Makefile
+	-rm -f bin/procgroup
+	-rm -f Makefile
 
 dist: distclean
-	( cd @PWD@/..; \
-	  tar cvf pargap-new.tar ./pargap; \
-	  gzip pargap-new.tar )
+	cd $(srcdir)/.. && tar cvf pargap-new.tar ./pargap && gzip pargap-new.tar
+	ls -l ../pargap-new.tar.gz
+
+$(srcdir)/configure: configure.ac
+	cd '$(srcdir)' && autoconf
+
+$(srcdir)/Makefile: Makefile.in configure $(gappath)/Makefile $(builddir)/bin/procgroup.in
+	cd '$(srcdir)' && $(SHELL) ./configure @LASTCONFIGUREARGS@
+
+# The second prerequisite (if present) is used to force a re-configure of
+# GAP if it is currently set to the wrong compiler
+$(gappath)/Makefile: $(gappath)/Makefile.in @FORCEGAPCONFIGURE@
+        ifeq (@CONFIGUREGAP@, )
+	  echo "ERROR: No Makefile in GAP_ROOT directory."
+	  echo "You need to call ./configure for GAP."
+	  exit 1
+        else
+	  @CONFIGUREGAP@
+        endif

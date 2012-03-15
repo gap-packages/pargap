@@ -2,7 +2,7 @@
 **
 *W  gapmpi.c            GAP source - ParGAP/MPI hooks          Gene Cooperman
 **
-*H  @(#)$Id$
+*H  @(#)$Id: gapmpi.c,v 1.7 2001/07/12 15:03:13 gap Exp $
 **
 *Y  Copyright (C) 1999-2001  Gene Cooperman
 *Y    See included file, COPYING, for conditions for copying
@@ -47,6 +47,20 @@ const char * Revision_gapmpi_c =
 #include        "code.h"                /* coder                           */
 #include        "vars.h"                /* variables                       */
 #include        "stats.h"               /* statements (XXX_BRK_CURR_STAT)  */
+
+#ifndef SIZEBAG_STRINGLEN
+#define PRE_GAP_4_3  1
+/* For backward compatibility with GAP 4.2 and 4.1;
+ * Delete this for GAP 4.4 and beyond, since there is a danger
+ * of re-defining if SIZEBAG_STRINGLEN will no longer be a macro.
+ * 
+ * NOTE:  GAP 4.2 and earlier didn't keep a special field for the string length.
+ * It just used the size of the bag.
+ * Hence GET_LEN_STRING was the SIZE_BAG and SET_LEN_STRING didn't exist.
+ */
+/* This SIZEBAG is overkill for GAP 4.2 and earlier, but it doesn't hurt. */
+#define SIZEBAG_STRINGLEN(len)         ((len) + 1 + sizeof(UInt))
+#endif
 
 #define INCLUDE_DECLARATION_PART
 # include       "gapmpi.h"               /* MPI functions and UNIX utils   */
@@ -146,6 +160,8 @@ Obj UNIX_Hostname( Obj self )
     sprintf( buf, "<unknown name>"); }
   host = NEW_STRING( SyStrlen(buf) ); /* NEW_STRING() allows for extra '\0' */
   SyStrncat( CSTR_STRING(host), buf, SyStrlen(buf) );
+  /* fix the length of <host>; see streams.c:FuncREAD_LINE_FILE()           */
+  /* GAP 4.2:  ResizeBag( host, SyStrlen( CSTR_STRING(host) ) + 1 ); */
   return host;
 }
 
@@ -345,7 +361,7 @@ Obj UNIX_Throw( Obj self ) {
  * These will either disappear, or move to next section:  MPI functions
  */
   
-#define UNINITIALIZED ((MPI_Datatype)-1) /* must be distinct from all MPI datatypes */
+#define UNINITIALIZED -1 /* must be distinct from all MPI datatypes */
 
 static MPI_Status last_status;
 static MPI_Datatype last_datatype = UNINITIALIZED; /* needed for MPIget_count */
@@ -357,6 +373,34 @@ MPI_Datatype MPIdatatype_infer(Obj object)
   ErrorQuit("bad vector passed for message handling; must be string or gen. vec.",
 	0L,0L);
   return 0;
+}
+
+static void insertNoBanner(int *argcPtr, char **argvPtr[], int isQuiet) {
+  static char *noBannerFlag = "-b";
+  static char *quietFlag = "-q";
+  int i, noBannerCount = 0;
+  int shift = (isQuiet ? 2 : 1);
+
+  /* PATCHING TO FIX BUGGY MPINU THAT IS RETURNING INCORRECT argc */
+  /* Delete this once MPINU is fixed. */
+  *argcPtr = 0;
+  while ( (*argvPtr)[*argcPtr] != NULL )
+    (*argcPtr)++;
+
+  for (i = 1; i < *argcPtr; i++)
+    if (0 == strcmp((*argvPtr)[i], noBannerFlag))
+      noBannerCount++;
+  if (noBannerCount & 0x1) /* If already an odd number of flags, */
+    return;                /* then already specifying no banner */
+
+  assert( (*argvPtr)[*argcPtr] == NULL );
+  for (i = *argcPtr; i >= 1; i--)
+    (*argvPtr)[i+shift] = (*argvPtr)[i];
+  assert( (*argvPtr)[*argcPtr + shift] == NULL );
+  (*argvPtr)[1] = noBannerFlag;
+  if (isQuiet)
+    (*argvPtr)[2] = quietFlag;
+  *argcPtr += shift;
 }
 
 /*====================================================================
@@ -438,8 +482,10 @@ Obj MPIerror_string( Obj self, Obj errorcode )
   MPI_Error_string( INT_INTOBJ(errorcode),
 		    (char*)CSTR_STRING(str), &resultlen);
   ((char*)CSTR_STRING(str))[resultlen] = '\0';
+#ifndef PRE_GAP_4_3
   SET_LEN_STRING(str, resultlen);
   ResizeBag( str, SIZEBAG_STRINGLEN( GET_LEN_STRING(str) ) );
+#endif
   return str;
 }
 
@@ -482,7 +528,7 @@ Obj MPIsend( Obj self, Obj args )
   tag = ( LEN_LIST(args) > 2 ? ELM_LIST( args, 3 ) : 0 );
   ConvString( buf );
   MPI_Send( ((char*)CSTR_STRING(buf)),
-	    SyStrlen((const Char*)CSTR_STRING(buf)), /* don't incl. \0 */
+	    SyStrlen((unsigned char*)CSTR_STRING(buf)), /* don't incl. \0 */
 	    MPIdatatype_infer(buf), INT_INTOBJ(dest), INT_INTOBJ(tag),
 	    MPI_COMM_WORLD);
   return 0;
@@ -507,10 +553,13 @@ Obj MPIrecv( Obj self, Obj args )
              INT_INTOBJ(source), INT_INTOBJ(tag), MPI_COMM_WORLD, &last_status);
   MPI_READ_DONE();
   if ( ! IS_STRING( buf ) )
-  { /* CLEAN THIS UP LATER */
-    ErrorQuit("ParGAP: panic: MPI_Recv():  result buffer is not a string", 0L, 0L);
-    exit(1);
-  }
+{ /* CLEAN THIS UP LATER */
+      ErrorQuit("ParGAP: panic: MPI_Recv():  result buffer is not a string",
+		0L, 0L);
+exit(1);
+}
+  /* fix the length of <buf>; see streams.c:FuncREAD_LINE_FILE()           */
+  /* GAP 4.2: ResizeBag( buf, SyStrlen( CSTR_STRING(buf) ) + 1 ); */
 #if 0
   settimer("autologout");
 #endif
@@ -562,8 +611,10 @@ Obj MPIiprobe( Obj self, Obj args )
  */
 
 /* called _before_ GAP system initialization to remove command lines, etc. */
-void InitPargapmpi( int * argc_ptr, char *** argv_ptr )
+void InitPargapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr )
 { char * cmd = (*argv_ptr)[0], * tmp;
+  int argc_old = *argc_ptr;
+  char **argv_old = *argv_ptr;
 
   /* Unless this binary is called as .../pargapmpi, we return immediately;
      In that case, InitLibrary() will note MPI_Initialized() is false,
@@ -577,15 +628,41 @@ void InitPargapmpi( int * argc_ptr, char *** argv_ptr )
     fputs("ParGAP:  panic:  couldn't initialize MPI.\n", stderr);
     SyExit(1);
   }
+  /* Insert -b into command line; else each slave also prints it */
+  { int rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    if (rank != 0) {
+      assert( argc_old >= *argc_ptr + 2 );
+      /* Will write two flags, -b -q, into argv;
+       * Assumes MPI_Init took it away, and that MPI_Init modified
+       * the existing argv, instead of creating a new one.
+       * This will not work with all MPIs.  (Ideally, GAP should
+       * pass ***argv, but it is really passing **argv to InitializeGap.)
+       * For example, some MPIs pass info through env var, and don't
+       * modify argv, while others redirect argv to a different array.
+       */
+      /* This is a patch to fix a problem in GAP/ParGap.  Since InitializeGap
+       *   really passes only argv, MPI_Init has now modified GAP's own argc,
+       *   but it has failed to modify _and can not modify_ GAP's argv itself,
+       *   since we were passed only the value of argv.
+       * So, let's modify what GAP's argv points to, and hope for the best.
+       */
+      if (*argv_ptr == argv_old)
+	      (*argv_ptr)[*argc_ptr] = NULL;
+      insertNoBanner(argc_ptr, argv_ptr, 1); /*1 == -q flag if a slave*/
+    }
+  }
 
   UNIX_Realtime( (Obj)0 ); /* initialize UNIX_Realtime:time_since_start */
   { if ( INT_INTOBJ( MPIcomm_size( (Obj)0 ) ) <= 1 )
-#ifdef USE_MPINU  
       printf("\nWARNING:  No slave processes; check procgroup file?\n\n");
-#else 
-      printf("\nWARNING:  No slave processes; did you not start ParGAP with an MPI launcher?\n\n");
-#endif
     if ( INT_INTOBJ(MPIcomm_rank((Obj)0)) > 0 ) {
+      *BreakOnError_ptr = 0; /* Errors should return to GAP top level */
+      /* In late GAP 4.4 series, this is no longer effective, since SyBanner
+       * is obsolete, and will be deleted, in favor of the GAP variable,
+       * GAPInfo.CommandLineOptions.b in GAP's lib/init.g
+       */
+      SyBanner = ! SyBanner;
       SyQuiet = ! SyQuiet;
       { sigset_t fullset;
 	sigfillset( &fullset );
@@ -599,8 +676,8 @@ void InitPargapmpi( int * argc_ptr, char *** argv_ptr )
   }
 }
 /* For backward compatibility */
-void InitGapmpi( int * argc_ptr, char *** argv_ptr ) {
-  InitPargapmpi( argc_ptr, argv_ptr );
+void InitGapmpi( int * argc_ptr, char *** argv_ptr, UInt *BreakOnError_ptr ) {
+  InitPargapmpi( argc_ptr, argv_ptr, BreakOnError_ptr );
 }
 
 /* called after MPI_Init() and after GAP system initialization */
@@ -618,17 +695,6 @@ void Init_MPIvars( void ) {
   AssGVar( gvar = GVarName("MPI_ANY_SOURCE"), INTOBJ_INT(MPI_ANY_SOURCE) );
   MakeReadOnlyGVar(gvar);
   AssGVar( gvar = GVarName("MPI_ANY_TAG"), INTOBJ_INT(MPI_ANY_TAG) );
-  MakeReadOnlyGVar(gvar);
-#ifdef USE_MPINU
-  AssGVar( gvar = GVarName("MPI_USE_MPINU"), True );
-  #ifdef MPINU_V2
-    AssGVar( gvar = GVarName("MPI_USE_MPINU_V2"), True );
-  #else
-    AssGVar( gvar = GVarName("MPI_USE_MPINU_V2"), False );
-  #endif
-#else
-  AssGVar( gvar = GVarName("MPI_USE_MPINU"), False );
-#endif
   MakeReadOnlyGVar(gvar);
 }
 

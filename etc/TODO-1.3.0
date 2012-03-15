@@ -1,0 +1,77 @@
+Ideas for ParGAP after version 1.3.0
+====================================
+
+
+Would have been nice before 1.3.0
+---------------------------------
+
+1.  Fix problems on Macs (see below) and then modify the README and FAQ in 
+    chapter 1 of the manual to reflect the change
+
+2.  Change the GAP kernel to allow ParGAP slaves to skip banner printing. This
+    is best done by setting a GAP global variable which is then read in 
+    $GAPROOT/lib/init.g when deciding whether to to call 
+    ShowKernelInformation(), overiding any options on the command line.
+
+3.  Remove the revision records from source files.
+
+4.  Test with HPC-GAP (using locks around most of the code in the first 
+    instance)
+
+Future work
+-----------
+
+5.  Load pargap as a kernel module, with a standard GAP binary. 
+    ParGAP recompiles GAP in order to insert a hook to call InitPargapmpi
+    as soon as GAP starts (whose only real job is to call MPI_Init). It also 
+    statically links gapmpi.c. Instead, one could envisage a standard GAP 
+    attempting to dynamically load gapmpi.so, and if successful then calling
+    InitPargapmpi. Alernatively, does it really matter if MPI_Init is not called
+    until GAP packages are loaded? If so, ParGAP could just be a standard 
+    package and MPI_Init called as the package is loaded.
+
+6.  Are there any functions in the MPI specification that it would be useful
+    for ParGAP to provide when using a system MPI library? It would be 
+    reasonably straightforward to route them through to the GAP level.
+
+7.  Experiment with other forms of marshalling data between processes. Perform
+    tests to compare the current string representation with IO_Pickle and a 
+    simple binary representation. It is to be hoped that pickling is better than
+    the current strings, and not much worse than binary.
+
+
+
+
+
+Mac issues
+----------
+
+The current version 1.3.0 has problems when running on Macs.
+
+On some Macs (e.g. Alexander's MacBook), the system MPI is broken and cannot
+run any command without an error.
+
+On mcdermott3 the following behaviour is observed:
+
+a) MPINU works fine
+
+b) With MPINU2, only the master starts up and the slaves don't get as far
+   as the GAP banner. The message given is
+
+   MPINU_recvall(rank 2): no receive; peer performed orderly shutdown.
+     receiving from rank 1: Assertion failed: (len == sizeof(struct msg_hdr)), function MPINU_recv_msg_hdr_with_cache, file recv-cache.c, line 108.
+
+c) With the system MPI (Open MPI version 1.2.8), the three copies of pargapmpi
+   start up, but when the slave sends its first message to the master (its 
+   hostname) as part of the startup in slavelist.g, we get 
+
+   [mcdermott3:20517] *** Process received signal ***
+   [mcdermott3:20517] Signal: Segmentation fault (11)
+   [mcdermott3:20517] Signal code: Address not mapped (1)
+   [mcdermott3:20517] Failing at address: 0x0
+
+
+
+    
+Paul Smith 10 August 2011
+
