@@ -1,0 +1,83 @@
+\begin{thebibliography}{CLMW99}
+
+\bibitem[CCHW03]{CCHW02}
+Gene Cooperman, Henri Casanova, Jim Hayes, and Thomas Witzel.
+\newblock Using {TOP-C} and {AMPIC} to port large parallel applications to the
+  {C}omputational {G}rid.
+\newblock {\em Future Generation Computer Systems}, 19:587--596, 2003.
+
+\bibitem[CFTY97]{CFTY94}
+Gene Cooperman, Larry Finkelstein, Michael Tselman, and Bryant York.
+\newblock Constructing permutation representations for matrix groups.
+\newblock {\em J. Symbolic Comput.}, 24(3-4):471--488, 1997.
+\newblock Computational algebra and number theory (London, 1993) [Used TOP-C
+  model].
+
+\bibitem[CG98]{CG98}
+Gene Cooperman and V.~Grinberg.
+\newblock {TOP-WEB: T}ask-oriented metacomputing on the {W}eb.
+\newblock {\em International Journal of Parallel and Distributed Systems and
+  Networks}, 1:184--192, 1998.
+
+\bibitem[CG02]{CG02}
+Gene Cooperman and Victor Grinberg.
+\newblock Scalable parallel coset enumeration: Bulk definition and the memory
+  wall.
+\newblock {\em J. Symbolic Computation}, 33:563--585, 2002.
+
+\bibitem[CHLM97]{CHLM97}
+Gene Cooperman, Gerhard Hiss, Klaus Lux, and J{\accent127u}rgen
+  M{\accent127u}ller.
+\newblock The {B}rauer tree of the principal $19$-block of the sporadic simple
+  {T}hompson group.
+\newblock {\em Experiment. Math.}, 6(4):293--300, 1997.
+
+\bibitem[CLMW99]{CLMW96}
+G.~D. Cooperman, W.~Lempken, G.~O. Michler, and M.~Weller.
+\newblock A new existence proof of {J}anko's simple group ${J}\sb 4$.
+\newblock In {\em Computational methods for representations of groups and
+  algebras (Essen, 1997)}, pages 161--175. Birkh\"auser, Basel, 1999.
+
+\bibitem[CMV97]{CH97}
+G.~Cooperman, G.~Michler, and H.~Vinck, editors.
+\newblock {\em Practical parallel coset enumeration}, volume 226 of {\em
+  Lecture notes in control and information sciences}. Springer Verlag, 1997.
+\newblock [Used TOP-C model].
+
+\bibitem[Coo95]{Coo95}
+Gene Cooperman.
+\newblock {STAR/MPI: B}inding a parallel library to interactive symbolic
+  algebra systems.
+\newblock In {\em Proc. of International Symposium on Symbolic and Algebraic
+  Computation (ISSAC '95)}, pages 126--132. ACM Press, 1995.
+
+\bibitem[Coo96]{Coo96}
+Gene Cooperman.
+\newblock {TOP-C: A Task-Oriented Parallel C} interface.
+\newblock In {\em $5^{\hbox{th}}$ International Symposium on High Performance
+  Distributed Computing (HPDC-5)}, pages 141--150. IEEE Press, 1996.
+
+\bibitem[Coo97]{Coo97}
+Gene Cooperman.
+\newblock {GAP/MPI: Facilitating Parallelism}.
+\newblock In L.~Finkelstein and W.M. Kantor, editors, {\em Proc. of Second
+  DIMACS Workshop on Groups and Computation {II}}, volume~28. AMS, Providence,
+  RI, 1997.
+
+\bibitem[Coo98]{Coo98}
+Gene Cooperman.
+\newblock Practical task-oriented parallelism for {G}aussian elimination in
+  distributed memory.
+\newblock In {\em Proceedings of the Sixth Conference of the International
+  Linear Algebra Society (Chemnitz, 1996)}, volume 275/276, pages 107--120,
+  1998.
+
+\bibitem[CT96]{CT96}
+Gene Cooperman and M.~Tselman.
+\newblock New sequential and parallel algorithms for generating high dimension
+  hecke algebras using the condensation technique.
+\newblock In {\em Proc. of International Symposium on Symbolic and Algebraic
+  Computation (ISSAC '96)}, pages 155--160. ACM Press, 1996.
+\newblock [Used TOP-C model].
+
+\end{thebibliography}

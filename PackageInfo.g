@@ -9,17 +9,20 @@
 ##  package shall be distributed for other GAP users, in particular if it
 ##  shall be redistributed via the GAP Website.
 
-##  With a new release of the package at least the entries .Version, .Date and
-##  .ArchiveURL must be updated.
+##  With a new release of the package at least the entries .Version, .Date 
+##  and .ArchiveURL must be updated.
 
 SetPackageInfo( rec(
 PackageName := "ParGAP",
 Subtitle := "Parallel GAP",
-Version := "1.3.0",
-Date := "11/08/2011",
-ArchiveURL := 
-          "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/pargap-1.3.0",
+Version := "1.3.1",
+Date := "30/05/2012",
+
+PackageWWWHome := "http://www.gap-system.org/HostedGapPackages/pargap/",
+
+ArchiveURL := Concatenation( ~.PackageWWWHome, "pargap-", ~.Version ),
 ArchiveFormats := ".tar.gz",
+
 Persons := [
   rec( 
     LastName      := "Cooperman",
@@ -52,10 +55,10 @@ Persons := [
 Status := "accepted",
 CommunicatedBy := "Steve Linton (St Andrews)",
 AcceptDate := "07/1999",
-README_URL := 
-  "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/README.pargap",
-PackageInfoURL := 
-  "http://www.cs.st-andrews.ac.uk/~pas/ParGAP/PackageInfo.g",
+
+README_URL := Concatenation( ~.PackageWWWHome, "README" ),
+PackageInfoURL := Concatenation( ~.PackageWWWHome, "PackageInfo.g" ),
+
 AbstractHTML := 
 "The ParGAP (Parallel GAP) package implements Master-Slave parallelism  on \
 multiple machines and in doing so provides  a  way  of  writing  parallel \
@@ -67,7 +70,7 @@ portable layer  with  a  high  level  interface  to  BSD  sockets.  Since \
 knowledge of MPI is not required for use of this software, we  now  refer \
 to the package as simply ParGAP. ParGAP also implements the more advanced \
 TOP-C model for cooperative parallelism.",
-PackageWWWHome := "http://www.ccs.neu.edu/home/gene/pargap.html",
+
 PackageDoc := rec(
   BookName  := "ParGAP",
   ArchiveURLSubset := ["doc", "htm"],
@@ -88,9 +91,9 @@ AvailabilityTest := function()
   if IsBoundGlobal("MPI_Initialized") then
     return ARCH_IS_UNIX() and not IsBoundGlobal("SendMsg");
   else
-    LogPackageLoadingMessage(PACKAGE_ERROR, Concatenation(
-      "ParGAP should be invoked by the script ",
-      "generated during installation, not as a package.\n",
+    LogPackageLoadingMessage(PACKAGE_WARNING, Concatenation(
+      "ParGAP cannot be loaded as a package. Instead of starting GAP in\n",
+      "the usual way, call the script generated during installation of ParGAP.\n",
       "Type `?Running ParGAP' for more details."));
     return false;
   fi;

@@ -1,0 +1,187 @@
+\indexentry {ParGAP@`ParGAP'}{5}
+\indexentry {Overview of ParGAP@Overview of ParGAP|indexit}{5}
+\indexentry {MPI@MPI!standard}{6}
+\indexentry {Choosing an MPI Library@Choosing an MPI Library|indexit}{7}
+\indexentry {Installing ParGAP@Installing ParGAP|indexit}{8}
+\indexentry {installation}{8}
+\indexentry {Running ParGAP@Running ParGAP|indexit}{9}
+\indexentry {Extended Example@Extended Example|indexit}{10}
+\indexentry {example@example!Slave Listener}{10}
+\indexentry {Slave Listener@Slave Listener!example}{10}
+\indexentry {Author@Author|indexit}{14}
+\indexentry {Invoking ParGAP with Remote Slaves (when using a system MPI library)@Invoking ParGAP with Remote Slaves (when using a system MPI library)|indexit}{14}
+\indexentry {Invoking ParGAP with Remote Slaves (when using MPINU)@Invoking ParGAP with Remote Slaves (when using MPINU)|indexit}{15}
+\indexentry {Problems Installing or Invoking ParGAP@Problems Installing or Invoking ParGAP|indexit}{16}
+\indexentry {Problems Running ParGAP with MPINU@Problems Running ParGAP with MPINU|indexit}{17}
+\indexentry {Problems Running ParGAP with a System MPI Implementation@Problems Running ParGAP with a System MPI Implementation|indexit}{18}
+\indexentry {Problems with Passwords (Getting Around Security)@Problems with Passwords (Getting Around Security)|indexit}{19}
+\indexentry {Modifying the GAP kernel@Modifying the GAP kernel|indexit}{19}
+\indexentry {Slave Listener Commands@Slave Listener Commands|indexit}{22}
+\indexentry {SendMsg@`SendMsg'}{22}
+\indexentry {RecvMsg@`RecvMsg'}{22}
+\indexentry {GetLastMsgSource@`GetLastMsgSource'}{22}
+\indexentry {GetLastMsgTag@`GetLastMsgTag'}{22}
+\indexentry {SendRecvMsg@`SendRecvMsg'}{22}
+\indexentry {BroadcastMsg@`BroadcastMsg'}{22}
+\indexentry {IsMaster@`IsMaster'}{22}
+\indexentry {FlushAllMsgs@`FlushAllMsgs'}{22}
+\indexentry {PingSlave@`PingSlave'}{23}
+\indexentry {ParEval@`ParEval'}{23}
+\indexentry {PrintToString@`PrintToString'}{23}
+\indexentry {ParRead@`ParRead'}{23}
+\indexentry {ParReread@`ParReread'}{23}
+\indexentry {ParList@`ParList'}{23}
+\indexentry {ProbeMsg@`ProbeMsg'}{23}
+\indexentry {ProbeMsgNonBlocking@`ProbeMsgNonBlocking'}{23}
+\indexentry {ParReset@`ParReset'}{23}
+\indexentry {ParBindGlobal@`ParBindGlobal'}{23}
+\indexentry {ParDeclareGlobalValue@`ParDeclareGlobalValue'}{23}
+\indexentry {ParDeclareGlobalFunction@`ParDeclareGlobalFunction'}{23}
+\indexentry {ParInstallValue@`ParInstallValue'}{24}
+\indexentry {ParInstallValue@`ParInstallValue'}{24}
+\indexentry {ParInstallGlobalFunction@`ParInstallGlobalFunction'}{24}
+\indexentry {ParInstallGlobalFunction@`ParInstallGlobalFunction'}{24}
+\indexentry {task}{25}
+\indexentry {shared data}{25}
+\indexentry {action}{25}
+\indexentry {task!input}{25}
+\indexentry {task!output}{25}
+\indexentry {Basic TOP-C (Master-Slave) commands@Basic TOP-C (Master-Slave) commands|indexit}{25}
+\indexentry {TOP-C model@TOP-C model}{25}
+\indexentry {master slave model}{25}
+\indexentry {MasterSlave@`MasterSlave'}{25}
+\indexentry {NOTASK@`NOTASK'}{26}
+\indexentry {actions}{26}
+\indexentry {NO_ACTION@`NO_ACTION'}{26}
+\indexentry {UPDATE_ACTION@`UPDATE_ACTION'}{26}
+\indexentry {REDO_ACTION@`REDO_ACTION'}{26}
+\indexentry {CONTINUATION_ACTION@`CONTINUATION_ACTION'}{26}
+\indexentry {IsUpToDate@`IsUpToDate'}{26}
+\indexentry {ParInstallTOPCGlobalFunction@`ParInstallTOPCGlobalFunction'}{26}
+\indexentry {ParInstallTOPCGlobalFunction@`ParInstallTOPCGlobalFunction'}{26}
+\indexentry {Other TOP-C Commands@Other TOP-C Commands|indexit}{26}
+\indexentry {SeqMasterSlave@`SeqMasterSlave'!simplified pseudo-code}{27}
+\indexentry {Simple Usage of MasterSlave()@Simple Usage of MasterSlave()|indexit}{28}
+\indexentry {Efficient Parallelism in MasterSlave() using CheckTaskResult()@Efficient Parallelism in MasterSlave() using CheckTaskResult()|indexit}{28}
+\indexentry {NO_ACTION@`NO_ACTION'!definition}{29}
+\indexentry {UPDATE_ACTION@`UPDATE_ACTION'!definition}{29}
+\indexentry {REDO_ACTION@`REDO_ACTION'!definition}{29}
+\indexentry {Modifying Task Output or Input (a dirty trick)@Modifying Task Output or Input (a dirty trick)|indexit}{29}
+\indexentry {The GOTO statement of the TOP-C model@The GOTO statement of the TOP-C model|indexit}{30}
+\indexentry {CONTINUATION_ACTION@`CONTINUATION_ACTION'!definition}{30}
+\indexentry {Being nice to other users (Nice, Alarm and LimitRss)@Being nice to other users (Nice, Alarm and LimitRss)|indexit}{30}
+\indexentry {UNIX_Nice@`UNIX_Nice'!definition}{30}
+\indexentry {UNIX_Alarm@`UNIX_Alarm'!definition}{30}
+\indexentry {UNIX_LimitRss@`UNIX_LimitRss'!definition}{30}
+\indexentry {Converting legacy sequential code to the TOP-C model@Converting legacy sequential code to the TOP-C model|indexit}{31}
+\indexentry {Trivial Parallelism@Trivial Parallelism|indexit}{32}
+\indexentry {Using ParGAP interactively@Using ParGAP interactively|indexit}{33}
+\indexentry {Streaming@Streaming|indexit}{34}
+\indexentry {TOP-C model for non-trivial parallelism@TOP-C model for non-trivial parallelism|indexit}{36}
+\indexentry {tutorial@tutorial!TOP-C}{38}
+\indexentry {tutorial@tutorial!MasterSlave()}{38}
+\indexentry {A simple example@A simple example|indexit}{38}
+\indexentry {ParSquare@ParSquare|indexit}{39}
+\indexentry {ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited)@ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited)|indexit}{40}
+\indexentry {ParInstallTOPCGlobalFunction@`ParInstallTOPCGlobalFunction'!example}{40}
+\indexentry {example@example!`ParInstallTOPCGlobalFunction'}{40}
+\indexentry {TaskInputIterator@`TaskInputIterator'!example}{40}
+\indexentry {example@example!`TaskInputIterator'}{40}
+\indexentry {ParInstallTOPCGlobalFunction@`ParInstallTOPCGlobalFunction'!definition}{40}
+\indexentry {TaskInputIterator@`TaskInputIterator'}{40}
+\indexentry {ParMultMat@ParMultMat|indexit}{40}
+\indexentry {example@example!`SeqMultMat'}{40}
+\indexentry {example@example!`ParMultMat'}{41}
+\indexentry {DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix)@DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix)|indexit}{42}
+\indexentry {example@example!`ParSemiEchelonMat'}{43}
+\indexentry {example@example!parallel Gaussian elimination}{43}
+\indexentry {Gaussian elimination@Gaussian elimination!parallel}{43}
+\indexentry {Caching slave task outputs (ParSemiEchelonMat revisited)@Caching slave task outputs (ParSemiEchelonMat revisited)|indexit}{44}
+\indexentry {example@example!`ParSemiEchelonMat' revisited}{44}
+\indexentry {Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again)@Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again)|indexit}{45}
+\indexentry {taskAgglom@`taskAgglom'}{45}
+\indexentry {agglomerating tasks}{45}
+\indexentry {TaskAgglomIndex@`TaskAgglomIndex'!context}{45}
+\indexentry {example@example!`taskAgglom'}{45}
+\indexentry {TaskAgglomIndex@`TaskAgglomIndex'}{46}
+\indexentry {example@example!`ParSemiEchelonMat' revisited again}{46}
+\indexentry {Raw MasterSlave (ParMultMat revisited)@Raw MasterSlave (ParMultMat revisited)|indexit}{48}
+\indexentry {raw MasterSlave()@raw `MasterSlave()'!definition}{48}
+\indexentry {MasterSlave()@`MasterSlave()'!raw}{48}
+\indexentry {example@example!`ParMultMat' revisited}{48}
+\indexentry {raw MasterSlave()@raw `MasterSlave()'!example}{48}
+\indexentry {example@example!raw `MasterSlave()'}{48}
+\indexentry {BeginRawMasterSlave@`BeginRawMasterSlave'}{48}
+\indexentry {RawSubmitTaskInput@`RawSubmitTaskInput'}{48}
+\indexentry {EndRawMasterSlave@`EndRawMasterSlave'}{48}
+\indexentry {task}{50}
+\indexentry {shared data}{50}
+\indexentry {Tracing and Debugging@Tracing and Debugging|indexit}{50}
+\indexentry {ParTrace@`ParTrace'}{51}
+\indexentry {UNIX_FflushStdout@`UNIX_FflushStdout'!definition}{51}
+\indexentry {SeqMasterSlave@`SeqMasterSlave'!definition}{51}
+\indexentry {Efficiency Considerations@Efficiency Considerations|indexit}{51}
+\indexentry {efficiency}{51}
+\indexentry {MasterSlaveStats@`MasterSlaveStats'}{52}
+\indexentry {Checkpointing in TOP-C@Checkpointing in TOP-C|indexit}{53}
+\indexentry {MasterSlavePendingTaskInputs@`MasterSlavePendingTaskInputs'}{53}
+\indexentry {When Should a Slave Process be Considered Dead?@When Should a Slave Process be Considered Dead?|indexit}{53}
+\indexentry {Tutorial introduction to the MPI C library@Tutorial introduction to the MPI C library|indexit}{54}
+\indexentry {MPI@MPI}{54}
+\indexentry {Message Passing Interface@Message Passing Interface}{54}
+\indexentry {MPI model@MPI model}{54}
+\indexentry {tutorial@tutorial!MPI}{54}
+\indexentry {MPI_Init@`MPI_Init'!example}{55}
+\indexentry {MPI_Finalize@`MPI_Finalize'!example}{55}
+\indexentry {MPI_Comm_rank@`MPI_Comm_rank'!example}{55}
+\indexentry {MPI_Get_count@`MPI_Get_count'!example}{55}
+\indexentry {MPI_Get_source@`MPI_Get_source'!example}{55}
+\indexentry {MPI_Get_tag@`MPI_Get_tag'!example}{55}
+\indexentry {MPI_Comm_size@`MPI_Comm_size'!example}{55}
+\indexentry {MPI_Send@`MPI_Send'!example}{55}
+\indexentry {MPI_Recv@`MPI_Recv'!example}{55}
+\indexentry {MPI_Probe@`MPI_Probe'!example}{55}
+\indexentry {Other low level commands@Other low level commands|indexit}{57}
+\indexentry {MPI commands@MPI commands!All ParGAP bindings}{57}
+\indexentry {UNIX system calls@UNIX system calls!All ParGAP bindings}{57}
+\indexentry {UNIX functions@UNIX functions}{57}
+\indexentry {functions@functions!UNIX}{57}
+\indexentry {UNIX_MakeString@`UNIX_MakeString'}{57}
+\indexentry {UNIX_DirectoryCurrent@`UNIX_DirectoryCurrent'}{57}
+\indexentry {UNIX_Chdir@`UNIX_Chdir'}{57}
+\indexentry {UNIX_FflushStdout@`UNIX_FflushStdout'}{57}
+\indexentry {UNIX_Catch@`UNIX_Catch'}{57}
+\indexentry {UNIX_Throw@`UNIX_Throw'}{57}
+\indexentry {UNIX_Getpid@`UNIX_Getpid'}{57}
+\indexentry {UNIX_Hostname@`UNIX_Hostname'}{57}
+\indexentry {UNIX_Alarm@`UNIX_Alarm'}{57}
+\indexentry {UNIX_Realtime@`UNIX_Realtime'}{57}
+\indexentry {UNIX_Nice@`UNIX_Nice'}{57}
+\indexentry {UNIX_LimitRss@`UNIX_LimitRss'}{57}
+\indexentry {MPI functions@MPI functions}{57}
+\indexentry {functions@functions!MPI}{57}
+\indexentry {MPI_Init@`MPI_Init'}{58}
+\indexentry {MPI_Initialized@`MPI_Initialized'}{58}
+\indexentry {MPI_Finalize@`MPI_Finalize'}{58}
+\indexentry {MPI_Comm_rank@`MPI_Comm_rank'}{58}
+\indexentry {MPI_Get_count@`MPI_Get_count'}{58}
+\indexentry {MPI_Get_source@`MPI_Get_source'}{58}
+\indexentry {MPI_Get_tag@`MPI_Get_tag'}{58}
+\indexentry {MPI_Comm_size@`MPI_Comm_size'}{58}
+\indexentry {MPI_World_size@`MPI_World_size'}{58}
+\indexentry {MPI_Error_string@`MPI_Error_string'}{58}
+\indexentry {MPI_Get_processor_name@`MPI_Get_processor_name'}{58}
+\indexentry {MPI_Attr_get@`MPI_Attr_get'}{58}
+\indexentry {MPI_Abort@`MPI_Abort'}{58}
+\indexentry {MPI_Send@`MPI_Send'}{58}
+\indexentry {MPI_Recv@`MPI_Recv'}{58}
+\indexentry {MPI_Probe@`MPI_Probe'}{58}
+\indexentry {MPI_Iprobe@`MPI_Iprobe'}{58}
+\indexentry {MPI global constants@MPI global constants}{58}
+\indexentry {constants@constants!MPI, global}{58}
+\indexentry {MPI_ANY_SOURCE@`MPI_ANY_SOURCE'}{58}
+\indexentry {MPI_ANY_TAG@`MPI_ANY_TAG'}{58}
+\indexentry {MPI_COMM_WORLD@`MPI_COMM_WORLD'}{58}
+\indexentry {MPI_TAG_UB@`MPI_TAG_UB'}{58}
+\indexentry {MPI_HOST@`MPI_HOST'}{58}
+\indexentry {MPI_IO@`MPI_IO'}{58}

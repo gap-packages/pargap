@@ -12,6 +12,8 @@
 
 #E init.g . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ends here
 
+ReadPkg("pargap","lib/remote.gd");
+
 # Print the banner if I am the master
 if MPI_Comm_rank() = 0 and 
   not ( GAPInfo.CommandLineOptions.q or
@@ -36,3 +38,7 @@ if MPI_Comm_rank() = 0 and
   fi;
   Print(" Type `?ParGAP' for information about using ParGAP.\n\n");
 fi;
+
+
+#E init.g . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ends here
+

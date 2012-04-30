@@ -180,7 +180,7 @@ above.
 <p>
 This function provides the functionality of a common case of
 <code>SubmitTaskInput()</code>, by turning it into a <font face="Gill Sans,Helvetica,Arial">GAP</font> iterator
-(see&nbsp;<a href="../../../doc/ref/chap31.html#s8ss0">iterators</a> in the Reference Manual).  Its meaning is best 
+(see&nbsp;<a href="../../../doc/ref/chap30.html#X85A3F00985453F95">iterators</a> in the Reference Manual).  Its meaning is best 
 understood from its definition:
 <p>
 <pre>
@@ -200,9 +200,9 @@ end;
 <p><p>
 Let us now write a matrix-matrix
 multiplication routine in this style.  Since matrix multiplication for
-dimension <var>n</var> requires <var>n<sup>3</sup></var> operations, we can afford to spend <var>n<sup>2</sup></var> time
+dimension <i>n</i> requires <i>n</i><sup>3</sup> operations, we can afford to spend <i>n</i><sup>2</sup> time
 doing any sequential work.  (A finer analysis would also consider the
-number of slaves, <var>k</var>, resulting in up to <var>k*n<sup>2</sup></var> time to send all
+number of slaves, <i>k</i>, resulting in up to <i>k</i>*<i>n</i><sup>2</sup> time to send all
 messages, depending on the MPI broadcast algorithm.)  So, a sequential
 matrix multiplication program might be written as follows.  (The style
 emphasizes clarity over efficiency.)
@@ -685,7 +685,7 @@ sequence.
 <p>
 Effectively, when we wish to return successive values from several deeply
 nested loops, we are in the situation of programming the ``opposite of a
-<font face="Gill Sans,Helvetica,Arial">GAP</font> iterator'' (see&nbsp;<a href="../../../doc/ref/chap31.html#s8ss0">iterators</a> in the Reference Manual).  
+<font face="Gill Sans,Helvetica,Arial">GAP</font> iterator'' (see&nbsp;<a href="../../../doc/ref/chap30.html#X85A3F00985453F95">iterators</a> in the Reference Manual).  
 We are already producing successive iterator values, and we wish to 
 ``stuff them back into some iterator''.  Until <font face="Gill Sans,Helvetica,Arial">GAP</font> develops such a
 language construct <code>:-)</code> , the following example of a ``raws'' 
@@ -709,8 +709,8 @@ We make use of the following three new <font face="Gill Sans,Helvetica,Arial">Pa
 Their use will be obvious in the next example.  This time, we
 parallelize <code>SeqMultMat()</code> by defining the task as the computation of a
 single entry in the result matrix.  Hence, the task will be the
-computation of the appropriate inner product.  For dimension <var>n</var>,
-<var>n<sup>2</sup></var> tasks are now generated, and each task is generated inside a
+computation of the appropriate inner product.  For dimension <i>n</i>,
+<i>n</i><sup>2</sup> tasks are now generated, and each task is generated inside a
 doubly nested loop.
 <p>
 <pre>
@@ -769,5 +769,5 @@ end );
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP004.htm">Previous</a>] [<a href ="CHAP006.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>July 2011
+<address>ParGAP manual<br>April 2012
 </address></body></html>

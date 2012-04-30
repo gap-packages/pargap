@@ -1,0 +1,50 @@
+\chapcontents {1}{Writing Parallel Programs in GAP Easily}{5}
+\seccontents {1.1}{Overview of ParGAP} {5}
+\seccontents {1.2}{Choosing an MPI Library} {7}
+\seccontents {1.3}{Installing ParGAP} {8}
+\seccontents {1.4}{Running ParGAP} {9}
+\seccontents {1.5}{Extended Example} {10}
+\seccontents {1.6}{Author} {14}
+\seccontents {1.7}{Invoking ParGAP with Remote Slaves (when using a system MPI library)} {14}
+\seccontents {1.8}{Invoking ParGAP with Remote Slaves (when using MPINU)} {15}
+\seccontents {1.9}{Problems Installing or Invoking ParGAP} {16}
+\seccontents {1.10}{Problems Running ParGAP with MPINU} {17}
+\seccontents {1.11}{Problems Running ParGAP with a System MPI Implementation} {18}
+\seccontents {1.12}{Problems with Passwords (Getting Around Security)} {19}
+\seccontents {1.13}{Modifying the GAP kernel} {19}
+\chapcontents {2}{Slave Listener}{21}
+\seccontents {2.1}{Slave Listener Commands} {22}
+\chapcontents {3}{Basic Concepts for the TOP-C model (MasterSlave)}{25}
+\seccontents {3.1}{Basic TOP-C (Master-Slave) commands} {25}
+\seccontents {3.2}{Other TOP-C Commands} {26}
+\seccontents {3.3}{Simple Usage of MasterSlave()} {28}
+\seccontents {3.4}{Efficient Parallelism in MasterSlave() using CheckTaskResult()} {28}
+\seccontents {3.5}{Modifying Task Output or Input (a dirty trick)} {29}
+\seccontents {3.6}{The GOTO statement of the TOP-C model} {30}
+\seccontents {3.7}{Being nice to other users (Nice, Alarm and LimitRss)} {30}
+\seccontents {3.8}{Converting legacy sequential code to the TOP-C model} {31}
+\chapcontents {4}{Tutorial}{32}
+\seccontents {4.1}{Trivial Parallelism} {32}
+\seccontents {4.2}{Using ParGAP interactively} {33}
+\seccontents {4.3}{Streaming} {34}
+\seccontents {4.4}{TOP-C model for non-trivial parallelism} {36}
+\chapcontents {5}{MasterSlave Tutorial}{38}
+\seccontents {5.1}{A simple example} {38}
+\seccontents {5.2}{ParSquare} {39}
+\seccontents {5.3}{ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited)} {40}
+\seccontents {5.4}{ParMultMat} {40}
+\seccontents {5.5}{DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix)} {42}
+\seccontents {5.6}{Caching slave task outputs (ParSemiEchelonMat revisited)} {44}
+\seccontents {5.7}{Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again)} {45}
+\seccontents {5.8}{Raw MasterSlave (ParMultMat revisited)} {48}
+\chapcontents {6}{Advanced Concepts for TOP-C model (MasterSlave)}{50}
+\seccontents {6.1}{Tracing and Debugging} {50}
+\seccontents {6.2}{Efficiency Considerations} {51}
+\seccontents {6.3}{Checkpointing in TOP-C} {53}
+\seccontents {6.4}{When Should a Slave Process be Considered Dead?} {53}
+\chapcontents {7}{MPI commands and UNIX system calls in ParGAP}{54}
+\seccontents {7.1}{Tutorial introduction to the MPI C library} {54}
+\seccontents {7.2}{Other low level commands} {57}
+\chapcontents {8}{Comments?}{59}
+\chapcontents {}{Bibliography}{60}
+\chapcontents {}{Index}{61}

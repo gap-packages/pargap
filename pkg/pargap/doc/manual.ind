@@ -1,0 +1,199 @@
+\letter A
+  action, 25
+  actions, 26
+  agglomerating tasks, 45
+  Agglomerating tasks for efficiency (ParSemiEchelonMat revisited again), \indexit{45}
+  A simple example, \indexit{38}
+  Author, \indexit{14}
+\letter B
+  Basic TOP-C (Master-Slave) commands, \indexit{25}
+  `BeginRawMasterSlave', 48
+  Being nice to other users (Nice, Alarm and LimitRss), \indexit{30}
+  `BroadcastMsg', 22
+\letter C
+  Caching slave task outputs (ParSemiEchelonMat revisited), \indexit{44}
+  Checkpointing in TOP-C, \indexit{53}
+  Choosing an MPI Library, \indexit{7}
+  constants, MPI, global, 58
+  `CONTINUATION_ACTION', 26
+    \sub definition, 30
+  Converting legacy sequential code to the TOP-C model, \indexit{31}
+\letter D
+  DefaultCheckTaskResult (as illustrated by ParSemiEchelonMatrix), \indexit{42}
+\letter E
+  efficiency, 51
+  Efficiency Considerations, \indexit{51}
+  Efficient Parallelism in MasterSlave() using CheckTaskResult(), \indexit{28}
+  `EndRawMasterSlave', 48
+  example, `ParInstallTOPCGlobalFunction', 40
+    \sub `ParMultMat', 41
+    \sub `ParMultMat' revisited, 48
+    \sub `ParSemiEchelonMat', 43
+    \sub `ParSemiEchelonMat' revisited, 44
+    \sub `ParSemiEchelonMat' revisited again, 46
+    \sub `SeqMultMat', 40
+    \sub `TaskInputIterator', 40
+    \sub `taskAgglom', 45
+    \sub parallel Gaussian elimination, 43
+    \sub raw `MasterSlave()', 48
+    \sub Slave Listener, 10
+  Extended Example, \indexit{10}
+\letter F
+  `FlushAllMsgs', 22
+  functions, MPI, 57
+    \sub UNIX, 57
+\letter G
+  Gaussian elimination, parallel, 43
+  `GetLastMsgSource', 22
+  `GetLastMsgTag', 22
+\letter I
+  installation, 8
+  Installing ParGAP, \indexit{8}
+  Invoking ParGAP with Remote Slaves (when using a system MPI library), \indexit{14}
+  Invoking ParGAP with Remote Slaves (when using MPINU), \indexit{15}
+  `IsMaster', 22
+  `IsUpToDate', 26
+\letter M
+  `MasterSlave', 25
+  `MasterSlave()', raw, 48
+  master slave model, 25
+  `MasterSlavePendingTaskInputs', 53
+  `MasterSlaveStats', 52
+  Message Passing Interface, 54
+  Modifying Task Output or Input (a dirty trick), \indexit{29}
+  Modifying the GAP kernel, \indexit{19}
+  MPI, 54
+    \sub standard, 6
+  `MPI_Abort', 58
+  `MPI_ANY_SOURCE', 58
+  `MPI_ANY_TAG', 58
+  `MPI_Attr_get', 58
+  `MPI_Comm_rank', 58
+    \sub example, 55
+  `MPI_Comm_size', 58
+    \sub example, 55
+  `MPI_COMM_WORLD', 58
+  `MPI_Error_string', 58
+  `MPI_Finalize', 58
+    \sub example, 55
+  `MPI_Get_count', 58
+    \sub example, 55
+  `MPI_Get_processor_name', 58
+  `MPI_Get_source', 58
+    \sub example, 55
+  `MPI_Get_tag', 58
+    \sub example, 55
+  `MPI_HOST', 58
+  `MPI_Init', 58
+    \sub example, 55
+  `MPI_Initialized', 58
+  `MPI_IO', 58
+  `MPI_Iprobe', 58
+  `MPI_Probe', 58
+    \sub example, 55
+  `MPI_Recv', 58
+    \sub example, 55
+  `MPI_Send', 58
+    \sub example, 55
+  `MPI_TAG_UB', 58
+  `MPI_World_size', 58
+  MPI commands, All ParGAP bindings, 57
+  MPI functions, 57
+  MPI global constants, 58
+  MPI model, 54
+\letter N
+  `NO_ACTION', 26
+    \sub definition, 29
+  `NOTASK', 26
+\letter O
+  Other low level commands, \indexit{57}
+  Other TOP-C Commands, \indexit{26}
+  Overview of ParGAP, \indexit{5}
+\letter P
+  `ParBindGlobal', 23
+  `ParDeclareGlobalFunction', 23
+  `ParDeclareGlobalValue', 23
+  `ParEval', 23
+  `ParGAP', 5
+  `ParInstallGlobalFunction', 24
+  `ParInstallTOPCGlobalFunction', 26
+    \sub definition, 40
+    \sub example, 40
+  ParInstallTOPCGlobalFunction() and TaskInputIterator() (ParSquare revisited), \indexit{40}
+  `ParInstallValue', 24
+  `ParList', 23
+  ParMultMat, \indexit{40}
+  `ParRead', 23
+  `ParReread', 23
+  `ParReset', 23
+  ParSquare, \indexit{39}
+  `ParTrace', 51
+  `PingSlave', 23
+  `PrintToString', 23
+  `ProbeMsg', 23
+  `ProbeMsgNonBlocking', 23
+  Problems Installing or Invoking ParGAP, \indexit{16}
+  Problems Running ParGAP with a System MPI Implementation, \indexit{18}
+  Problems Running ParGAP with MPINU, \indexit{17}
+  Problems with Passwords (Getting Around Security), \indexit{19}
+\letter R
+  raw `MasterSlave()', definition, 48
+    \sub example, 48
+  Raw MasterSlave (ParMultMat revisited), \indexit{48}
+  `RawSubmitTaskInput', 48
+  `RecvMsg', 22
+  `REDO_ACTION', 26
+    \sub definition, 29
+  Running ParGAP, \indexit{9}
+\letter S
+  `SendMsg', 22
+  `SendRecvMsg', 22
+  `SeqMasterSlave', definition, 51
+    \sub simplified pseudo-code, 27
+  shared data, 25, 50
+  Simple Usage of MasterSlave(), \indexit{28}
+  Slave Listener, example, 10
+  Slave Listener Commands, \indexit{22}
+  Streaming, \indexit{34}
+\letter T
+  task, 25, 50
+    \sub input, 25
+    \sub output, 25
+  `taskAgglom', 45
+  `TaskAgglomIndex', 46
+    \sub context, 45
+  `TaskInputIterator', 40
+    \sub example, 40
+  The GOTO statement of the TOP-C model, \indexit{30}
+  TOP-C model, 25
+  TOP-C model for non-trivial parallelism, \indexit{36}
+  Tracing and Debugging, \indexit{50}
+  Trivial Parallelism, \indexit{32}
+  tutorial, MasterSlave(), 38
+    \sub MPI, 54
+    \sub TOP-C, 38
+  Tutorial introduction to the MPI C library, \indexit{54}
+\letter U
+  `UNIX_Alarm', 57
+    \sub definition, 30
+  `UNIX_Catch', 57
+  `UNIX_Chdir', 57
+  `UNIX_DirectoryCurrent', 57
+  `UNIX_FflushStdout', 57
+    \sub definition, 51
+  `UNIX_Getpid', 57
+  `UNIX_Hostname', 57
+  `UNIX_LimitRss', 57
+    \sub definition, 30
+  `UNIX_MakeString', 57
+  `UNIX_Nice', 57
+    \sub definition, 30
+  `UNIX_Realtime', 57
+  `UNIX_Throw', 57
+  UNIX functions, 57
+  UNIX system calls, All ParGAP bindings, 57
+  `UPDATE_ACTION', 26
+    \sub definition, 29
+  Using ParGAP interactively, \indexit{33}
+\letter W
+  When Should a Slave Process be Considered Dead?, \indexit{53}

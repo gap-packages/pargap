@@ -44,15 +44,15 @@ gap> ParFirstResult := function( list, fnc )
 >              i );
 >   od;
 >   result := RecvMsg(); # default is MPI_ANY_SOURCE
->   ParReset(); # Interrupt all other slaves
+>   ParReset(); # Interrupt all other slaves - only if using MPINU
 >   return result;
 > end;;
 
 
-gap> ParEval("RequirePackage(\"factint\")");
+gap> ParEval("LoadPackage(\"factint\")");
 
-Loading FactInt 1.1 (Routines for Integer Factorization),
-by Stefan.Kohl@cip.mathematik.uni-stuttgart.de
+Loading FactInt 1.5.2 (Routines for Integer Factorization )
+by Stefan Kohl, kohl@mathematik.uni-stuttgart.de
 
 true
 

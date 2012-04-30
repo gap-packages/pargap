@@ -23,40 +23,27 @@ gap> RecvMsg( 2 );
 gap> # The following is equivalent to the two previous commands.
 gap> SendRecvMsg( "3+4", 2);
 7
-gap> # Flush any messages that are pending. The response is
-gap> # the number of messages flushed. (Above, the two
-gap> # SendMsg("Print...") (to the default slave: 1) did not
-gap> # have a corresponding RecvMsg() command.)
-gap> FlushAllMsgs();
-2
+gap> # The two SendMsg() commands that were sent to Slave 1 earlier have
+gap> # responses that are waiting in the message queue from that slave.
+gap> # Check that there is a message waiting. With some MPI implementations
+gap> # the message is not immediately available, but when ProbeMsg() does
+gap> # return true then RecvMsg() is guaranteed to succeed.
+gap> ProbeMsgNonBlocking( 1 );
+false
+gap> ProbeMsgNonBlocking( 1 );
+true
+gap> # Print() is a `no-value' functions, and so the result of a RecvMsg()
+gap> # in both these cases is "<no_return_val>".
+gap> RecvMsg( 1 );
+"<no_return_val>"
+gap> RecvMsg( 1 );
+"<no_return_val>"
 gap> # As with Print() the result of Exec() appears on standard
-gap> # output. Print() and Exec() are each `no-value' functions,
-gap> # and so the result of a RecvMsg() in these cases
-gap> # is "<no_return_val>".
+gap> # output, and the result is "<no_return_val>".
 gap> SendRecvMsg( "Exec(\"pwd\")" ); # Your pwd will differ :-)
 /home/gene
 "<no_return_val>"
-gap> # Put default slave into an infinite loop.
-gap> SendMsg("while true do od");
-gap> # Default slave can't execute the next command until it's
-gap> # finished with the previous command.
-gap> SendMsg("Print(\"WAKE UP\\n\")");
-gap> # Check to see if a message is waiting to be collected but
-gap> # return immediately (i.e. don't get blocked by waiting for
-gap> # a message to appear). A `false' response indicates the
-gap> # infinite loop hasn't terminated and produced a value yet!
-gap> ProbeMsgNonBlocking();
-false
-gap> # Send an interrupt to each slave, slave 1 will see the
-gap> # following command and print `WAKE UP', and then all
-gap> # pending messages are flushed.
-gap> ParReset();
-... resetting ...
-WAKE UP
-0
-gap> # The return value, 0, from ParReset() indicates there
-gap> # were 0 pending messages flushed, confirming correctness
-gap> # of ProbeMsgNonBlocking() when it returned "false"
+gap> # Define a variable on a slave
 gap> SendRecvMsg( "a:=45; 3+4", 1 );
 7
 gap> # Note "a" is defined on slave 1, not slave 2.
@@ -78,25 +65,21 @@ gap> squares := ParList( [1..100], x->x^2 );
   5476, 5625, 5776, 5929, 6084, 6241, 6400, 6561, 6724, 6889, 7056,
   7225, 7396, 7569, 7744, 7921, 8100, 8281, 8464, 8649, 8836, 9025,
   9216, 9409, 9604, 9801, 10000 ]
-gap> # Ensure problem shared data is read into master and slaves.
-gap> # Try one of your GAP program files instead.
-gap> ParRead( "/home/gene/myprogram.g");
-
 gap> # Send a large, local (non-remote) data structure to a slave
 gap> Concatenation("x := ", PrintToString([1..10]*2));
 "x := [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]\n\000"
 gap> SendMsg( Concatenation("x := ", PrintToString([1..10]*2)) );
 gap> RecvMsg();
 [ 2, 4, 6, 8, 10, 12, 14, 16, 18, 20 ]
-
 gap> # Send a local (non-remote) function to a slave
 gap> myfnc := function() return 42; end;;
 gap> # Use PrintToString() to define myfnc on all slave processes
 gap> BroadcastMsg( PrintToString( "myfnc := ", myfnc ) );
 gap> SendRecvMsg( "myfnc()", 1 );
 42
-gap> FlushAllMsgs(); # There are no messages pending.
-0
+gap> # Ensure problem shared data is read into master and slaves.
+gap> # Try one of your GAP program files instead.
+gap> ParRead( "/home/gene/myprogram.g");
 
 
 gap> ParInstallTOPCGlobalFunction( "MyParList",

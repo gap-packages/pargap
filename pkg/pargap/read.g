@@ -9,6 +9,8 @@
 #Y    See included file, COPYING, for conditions for copying
 ##
 
+ReadPkg("pargap","lib/remote.gi");
+
 #if not IsBound( MasterSlave ) then
   ReadPkg("pargap","lib/slavelist.g");
   ReadPkg("pargap","lib/masslave.g");

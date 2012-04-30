@@ -225,7 +225,7 @@ BroadcastMsg("x:=\"abc\"; Print(Length(x), \"\\n\")");;
 <p>
 <h2><a name="SECT002">1.2 Choosing an MPI Library</a></h2>
 <p><p>
-If you are using Linux or OS X and wish to try out <font face="Gill Sans,Helvetica,Arial">ParGAP</font> quickly, you
+If you are using Linux and wish to try out <font face="Gill Sans,Helvetica,Arial">ParGAP</font> quickly, you
 can skip this section and let the <font face="Gill Sans,Helvetica,Arial">ParGAP</font> build process choose an MPI
 library for you. If you have a little more time, or are running on a different
 system, please read on.
@@ -245,12 +245,6 @@ Both of these are compatible with Linux, Macs and Windows. Installation packages
 can be downloaded from their websites, or may be available through your systems
 standard package management mechanism.
 <p>
-We recommend that you use <font face="Gill Sans,Helvetica,Arial">ParGAP</font> with a system MPI implementation instead of 
-MPINU, if possible. These implementations provide better performance and fault 
-tolerance, and are compatible with a wider range of operating systems and 
-hardware, including high speed networks and proprietory high-end computing 
-systems. 
-<p>
 The MPINU library included with <font face="Gill Sans,Helvetica,Arial">ParGAP</font> provides the MPI functionality that
 <font face="Gill Sans,Helvetica,Arial">ParGAP</font> needs by using Unix sockets. This implementation is sufficient for
 basic <font face="Gill Sans,Helvetica,Arial">ParGAP</font> usage, but does not scale to larger systems as well as the 
@@ -260,7 +254,19 @@ editing in <font face="Gill Sans,Helvetica,Arial">ParGAP</font>. When built with
 commands <code>ParReset()</code> and <code>FlushAllMsgs()</code> which can be useful when developing 
 parallel programs. See 
 Section&nbsp;<a href="CHAP001.htm#SECT011">Problems Running ParGAP with a System MPI Implementation</a> for details
-of these known issues with system MPI implementations.
+of these known issues with system MPI implementations. Two versions of MPINU
+are included with <font face="Gill Sans,Helvetica,Arial">ParGAP</font>: the original MPINU and a newer version, called 
+MPINU2. 
+<p>
+On Linux machines, we recommend that you use <font face="Gill Sans,Helvetica,Arial">ParGAP</font> with a system MPI 
+implementation instead of MPINU, if possible. These implementations provide 
+better performance and fault tolerance, and are compatible with a wider range 
+of operating systems and hardware, including high speed networks and 
+proprietory high-end computing systems. 
+<p>
+On Macs, we recommend using the original MPINU since there are currently some 
+problems running <font face="Gill Sans,Helvetica,Arial">ParGAP</font> with both a system MPI implementation and MPINU2.
+Both these issues will hopefully be resolved in a future release.
 <p>
 By default, the <font face="Gill Sans,Helvetica,Arial">ParGAP</font> build process 
 (see Section&nbsp;<a href="CHAP001.htm#SECT003">Installing ParGAP</a>) tries to use a system MPI implementation if 
@@ -277,10 +283,12 @@ running MPINU2.
 Installing <font face="Gill Sans,Helvetica,Arial">ParGAP</font> should be relatively simple.  However,  since  there
 are many interactions both with the  <font face="Gill Sans,Helvetica,Arial">GAP</font>  kernel  and  with  the  UNIX
 operating system, in a minority of cases,  manual  intervention  will  be
-necessary. If you are part of  this  minority,  please  see  the  section
-<a href="badlink:ParGAP:Problems with Installation">Problems with Installation</a>.  The  most  common  problem  is  the  local
-security policy; <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is more pleasant to use when you don't have to
-manually provide the password for each slave. See section <a href="CHAP001.htm#SECT012">Problems  with Passwords (Getting Around Security)</a> for suggestions in this respect.
+necessary. If you are part of  this minority,  please  see  the  
+section&nbsp;<a href="CHAP001.htm#SECT009">Problems Installing or Invoking ParGAP</a>. The most common problem 
+is the local security policy; <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is more pleasant to use when  you  
+don't have  to  manually  provide the password for  each  slave.  See  
+section&nbsp;<a href="CHAP001.htm#SECT012">Problems  with Passwords (Getting Around Security)</a> for  
+suggestions  in this respect.
 <p>
 To install the <font face="Gill Sans,Helvetica,Arial">ParGAP</font> package, move  the  file  <code>pargap-</code><var>XXX</var><code>.zoo</code>  or
 <code>pargap-</code><var>XXX</var><code>.tar.gz</code> (for some version number <var>XXX</var> of  <font face="Gill Sans,Helvetica,Arial">ParGAP</font>)  into
@@ -289,7 +297,7 @@ will be the directory <code>pkg</code> in the hierarchy of your version of  <fon
 (in fact, currently it is  not  possible  to  have  the  <code>pkg</code>  directory
 separate from <font face="Gill Sans,Helvetica,Arial">GAP</font>'s <code>pkg</code> directory; we hope to remedy this in  future
 versions of <font face="Gill Sans,Helvetica,Arial">ParGAP</font> so that it will also possible to keep an additional
-<code>pkg</code> directory in your private directories; section <a href="../../../doc/ref/chap78.html#s1ss0">Installing a GAP Package</a> 
+<code>pkg</code> directory in your private directories; section <a href="../../../doc/ref/chap76.html#X82473E4B8756C6CD">Installing a GAP Package</a> 
 of the GAP reference manual gives details on how to do  this,
 when it's possible.)
 <p>
@@ -370,7 +378,7 @@ ready to use, and confirmation of whether a system MPI library or MPINU will
 be used. The method of running <font face="Gill Sans,Helvetica,Arial">ParGAP</font> depends on this MPI choice, and the 
 MPI library is auto-detected, or can be specified, in <code>configure</code>, as 
 described in Section&nbsp;<a href="CHAP001.htm#SECT003">Installing ParGAP</a>. The pros and cons of the two 
-different library variants are discussed in Section&nbsp;<a href="badlink:ParGAP:Which MPI Library to Use">Which MPI Library to Use</a>.
+different library variants are discussed in Section&nbsp;<a href="CHAP001.htm#SECT002">Choosing an MPI Library</a>.
 <p>
 We will assume that you have copied the <code>pargap.sh</code> script to a location
 on your search path and renamed it as <code>pargap</code>, as suggested in 
@@ -415,9 +423,9 @@ how to run remote slaves, see
 Section&nbsp;<a href="CHAP001.htm#SECT008">Invoking ParGAP with Remote Slaves (when using MPINU)</a>.
 <p>
 If you had trouble installing or starting <font face="Gill Sans,Helvetica,Arial">ParGAP</font>, see the 
-section&nbsp;<a href="badlink:ParGAP:Problems with Installation">Problems with Installation</a>. Otherwise you are ready to test your  
-installation, Try the example in the following section (if you are reading 
-this from  <font face="Gill Sans,Helvetica,Arial">GAP</font>'s on-line help, type: <code>?&gt;</code>).
+section&nbsp;<a href="CHAP001.htm#SECT009">Problems Installing or Invoking ParGAP</a>. Otherwise you are ready 
+to test your installation, Try the example in the following section (if you 
+are reading this from  <font face="Gill Sans,Helvetica,Arial">GAP</font>'s on-line help, type: <code>?&gt;</code>).
 <p>
 <p>
 <h2><a name="SECT005">1.5 Extended Example</a></h2>
@@ -432,7 +440,10 @@ are using the unmodified <code>procgroup</code> file, then your <strong>remote s
 will be other processes on your local machine. It is a good idea  to  run
 only on your local machine for your first experiments and while  you  are
 debugging parallel programs. When  you  wish  to  experiment  with  using
-remote machines, you can then proceed to the following section, <a href="badlink:ParGAP:Invoking ParGAP with Remote Slaves">Invoking ParGAP with Remote Slaves</a>.
+remote machines, you can then proceed to 
+section&nbsp;<a href="CHAP001.htm#SECT007">Invoking ParGAP with Remote Slaves (when using a system MPI library)</a> 
+or section&nbsp;<a href="CHAP001.htm#SECT008">Invoking ParGAP with Remote Slaves (when using MPINU)</a> depending
+on which MPI library <font face="Gill Sans,Helvetica,Arial">ParGAP</font> has been built to use.
 <p>
 <a name = "I3"></a>
 
@@ -683,7 +694,7 @@ The basic usage is
 <p>
 <code>mpiexec -n </code><var>num</var><code> pargap</code>
 <p>
-to launch <code></code><var>num</var><code></code> copies of <font face="Gill Sans,Helvetica,Arial">ParGAP</font> (i.e. one master and <var>(num-1)</var> slaves). 
+to launch <code></code><var>num</var><code></code> copies of <font face="Gill Sans,Helvetica,Arial">ParGAP</font> (i.e. one master and (<i>num</i>&#8722;1) slaves). 
 With no other parameters, these will all be launched on the host machine.
 <p>
 A configuration file can be used to specify hosts for remote slaves. The
@@ -739,7 +750,7 @@ If <font face="Gill Sans,Helvetica,Arial">ParGAP</font> has been built to use th
 <font face="Gill Sans,Helvetica,Arial">ParGAP</font> includes the facility (on Linux) to start up and manage 
 remove slaves without needing an external MPI launcher. If <font face="Gill Sans,Helvetica,Arial">ParGAP</font> is 
 built using a system MPI library then please read to 
-section&nbsp;<a href="badlink:ParGAP:Invoking ParGAP with Remote Slaves (using a system MPI library)">Invoking ParGAP with Remote Slaves (using a system MPI library)</a>
+section&nbsp;<a href="CHAP001.htm#SECT007">Invoking ParGAP with Remote Slaves (when using a system MPI library)</a>
 instead. 
 <p>
 We'll assume that when <font face="Gill Sans,Helvetica,Arial">ParGAP</font> was built the scipt <code>bin/pargap.sh</code> was
@@ -833,6 +844,16 @@ sections after this one consider problems specific to using MPINU or a system
 MPI library respectively.
 <p>
 <dl compact>
+<dt>0.<dd>
+    If you are using <font face="Gill Sans,Helvetica,Arial">ParGAP</font> on a Mac with MPINU2 or a system MPI 
+    implementation then <font face="Gill Sans,Helvetica,Arial">ParGAP</font> may consistently crash on startup. If this
+    is the case then try using MPINU instead by reconfiguring <font face="Gill Sans,Helvetica,Arial">ParGAP</font> with
+<p>
+<code>./configure --with-mpi=MPINU</code>
+<p>
+<dt><dd>
+    This is a known issue which will be fixed in a forthcoming version.
+<p>
 <dt>1.<dd>
     Do you have enough swap space to support multiple <font face="Gill Sans,Helvetica,Arial">GAP</font> processes? A
     simple way to check this is with the UNIX command, <code>top</code>.  The  Linux
@@ -893,7 +914,7 @@ gap&gt; SendRecvMsg("UNIX_Getpid()");
     messages on the terminal of the master process. If you have many slaves
     and do not wish to see these messages, then pass the <code>-b</code> and/or <code>-q</code> 
     switches to <font face="Gill Sans,Helvetica,Arial">ParGAP</font> when it starts, to disable the banner or all messages
-    respectively. See Section&nbsp;<a href="../../../doc/ref/chap4.html#s1ss0">Ref:Command Line Options</a> of the GAP Reference
+    respectively. See Section&nbsp;<a href="../../../doc/ref/chap3.html#X782751D5858A6EAF">Ref:Command Line Options</a> of the GAP Reference
     Manual for further details.
 <p>
 <dt>9.<dd>
@@ -1070,7 +1091,7 @@ rlwrap mpiexec -n 3 pargap
 mpiexec -n 3 pargap -s 3g
 </pre>
   The <code>-a</code> and <code>-m</code> switches can also be used to control memory usage. See 
-  Section&nbsp;<a href="../../../doc/ref/chap4.html#s1ss0">Ref:Command Line Options</a> of the GAP Reference Manuel for 
+  Section&nbsp;<a href="../../../doc/ref/chap3.html#X782751D5858A6EAF">Ref:Command Line Options</a> of the GAP Reference Manuel for 
   further information.
 </dl>
 <p>
@@ -1173,5 +1194,5 @@ Gene Cooperman
 <p>
 [<a href = "chapters.htm">Up</a>] [<a href ="CHAP002.htm">Next</a>] [<a href = "theindex.htm">Index</a>]
 <P>
-<address>ParGAP manual<br>July 2011
+<address>ParGAP manual<br>April 2012
 </address></body></html>
