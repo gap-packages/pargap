@@ -22,14 +22,11 @@ pargap/doc/manual.lab
 pargap/doc/INTERNALS
 pargap/doc/manual.ps
 pargap/doc/manual.six
-pargap/doc/manbbl.orig
 pargap/doc/manual.ind
 pargap/doc/TODO
 pargap/doc/manual.ilg
 pargap/doc/make_doc
 pargap/doc/manual.idx
-pargap/examples/parmultmat.g-old2
-pargap/examples/parmultmat.g-old
 pargap/mpinu/Makefile
 pargap/mpinu/INTERNALS
 pargap/mpinu/TODO

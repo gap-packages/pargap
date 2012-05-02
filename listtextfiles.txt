@@ -9,7 +9,6 @@ pargap/doc/pargap6.tex
 pargap/doc/pargap3.tex
 pargap/doc/pargap2.tex
 pargap/doc/manual.tex
-pargap/doc/answers.tex
 pargap/doc/tutorial.tex
 pargap/doc/manual.example-4.tst
 pargap/doc/pargap1.tex
@@ -55,9 +54,7 @@ pargap/mpinu2/mpiimpl.h
 pargap/mpinu2/mpi.c
 pargap/tst/pargap.tst
 pargap/lib/masslave.g
-pargap/lib/remote.gd
 pargap/lib/slavelist.g
-pargap/lib/remote.gi
 pargap/htm/indxP.htm
 pargap/htm/indxT.htm
 pargap/htm/indxR.htm
