@@ -12,8 +12,6 @@
 
 #E init.g . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ends here
 
-ReadPkg("pargap","lib/remote.gd");
-
 # Print the banner if I am the master
 if MPI_Comm_rank() = 0 and 
   not ( GAPInfo.CommandLineOptions.q or
