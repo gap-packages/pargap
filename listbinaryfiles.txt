@@ -1,4 +1,5 @@
 pargap/Makefile.in
+pargap/configure
 pargap/CONTENTS
 pargap/configure.ac
 pargap/etc/install-private-gap.sh
