@@ -15,8 +15,8 @@
 SetPackageInfo( rec(
 PackageName := "ParGAP",
 Subtitle := "Parallel GAP",
-Version := "1.3.3",
-Date := "07/05/2012",
+Version := "1.3.4",
+Date := "08/05/2012",
 
 PackageWWWHome := "http://www.gap-system.org/HostedGapPackages/pargap/",
 
