@@ -3271,6 +3271,13 @@ $as_echo "no" >&6; }
         echo ""
         echo "  And then run ./configure; make for ParGAP again."
         echo ""
+        echo "  If you don't have a system MPI installation, you may try to use"
+        echo "     ./configure --with-mpi=MPINU2"
+        echo "  or"
+        echo "     ./configure --with-mpi=MPINU"
+        echo "  to use MPINU library supplied with the package. See README file"
+        echo "  and ParGAP manual for further details."
+        echo ""
 
         as_fn_error $? "GAP needs building with $MPICC" "$LINENO" 5
       fi;
