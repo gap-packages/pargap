@@ -15,8 +15,8 @@
 SetPackageInfo( rec(
 PackageName := "ParGAP",
 Subtitle := "Parallel GAP",
-Version := "1.3.5",
-Date := "01/06/2012",
+Version := "1.4.0",
+Date := "17/11/2013",
 
 PackageWWWHome := "http://www.gap-system.org/HostedGapPackages/pargap/",
 
@@ -39,7 +39,7 @@ Persons := [
     LastName      := "Smith",
     FirstNames    := "Paul",
     IsAuthor      := false,
-    IsMaintainer  := true,
+    IsMaintainer  := false,
     Email         := "paul.smith@st-andrews.ac.uk",
     WWWHome       := "http://www.cs.st-andrews.ac.uk/~pas",
     PostalAddress := Concatenation( [
@@ -50,7 +50,22 @@ Persons := [
                          "UK" ] ),
     Place         := "St Andrews",
     Institution   := "University of St Andrews"
-  )
+  ),
+  rec(
+    LastName      := "Konovalov",
+    FirstNames    := "Alexander",
+    IsAuthor      := false,
+    IsMaintainer  := true,
+    Email         := "alexk@mcs.st-andrews.ac.uk",
+    WWWHome       := "http://www.cs.st-andrews.ac.uk/~alexk/",
+    PostalAddress := Concatenation( [
+                     "School of Computer Science\n",
+                     "University of St Andrews\n",
+                     "Jack Cole Building, North Haugh,\n",
+                     "St Andrews, Fife, KY16 9SX, Scotland" ] ),
+    Place         := "St Andrews",
+    Institution   := "University of St Andrews"
+  )   
 ],
 Status := "accepted",
 CommunicatedBy := "Steve Linton (St Andrews)",
@@ -81,7 +96,7 @@ PackageDoc := rec(
   Autoload  := true
 ),
 Dependencies := rec(
-  GAP := ">=4.5",
+  GAP := ">=4.7",
   NeededOtherPackages := [],
   SuggestedOtherPackages := [],
   ExternalConditions := []
