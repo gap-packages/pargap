@@ -3278,7 +3278,7 @@ $as_echo "no" >&6; }
         echo "  to use MPINU library supplied with the package. See README file"
         echo "  and ParGAP manual for further details."
         echo ""
-
+        
         as_fn_error $? "GAP needs building with $MPICC" "$LINENO" 5
       fi;
     fi;

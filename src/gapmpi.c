@@ -144,8 +144,7 @@ Obj UNIX_Hostname( Obj self )
   if (res == -1) {
     perror("UNIX_Hostname: ");
     sprintf( buf, "<unknown name>"); }
-  host = NEW_STRING( SyStrlen(buf) ); /* NEW_STRING() allows for extra '\0' */
-  SyStrncat( CSTR_STRING(host), buf, SyStrlen(buf) );
+  C_NEW_STRING( host, strlen(buf), buf );
   return host;
 }
 
@@ -482,7 +481,7 @@ Obj MPIsend( Obj self, Obj args )
   tag = ( LEN_LIST(args) > 2 ? ELM_LIST( args, 3 ) : 0 );
   ConvString( buf );
   MPI_Send( ((char*)CSTR_STRING(buf)),
-	    SyStrlen((const Char*)CSTR_STRING(buf)), /* don't incl. \0 */
+	    strlen((const Char*)CSTR_STRING(buf)), /* don't incl. \0 */
 	    MPIdatatype_infer(buf), INT_INTOBJ(dest), INT_INTOBJ(tag),
 	    MPI_COMM_WORLD);
   return 0;
@@ -500,7 +499,7 @@ Obj MPIrecv( Obj self, Obj args )
       ErrorQuit("MPI_Recv():  received a buffer that is not a string", 0L, 0L);
   ConvString( buf );
   /* Note GET_LEN_STRING() returns GAP string length
-	 and SyStrlen(CSTR_STRING()) returns C string length (up to '\0') */
+	 and strlen(CSTR_STRING()) returns C string length (up to '\0') */
   if ( ! MPI_READ_ERROR() )
     MPI_Recv( CSTR_STRING(buf), GET_LEN_STRING(buf),
 	     last_datatype=MPIdatatype_infer(buf),
@@ -571,7 +570,7 @@ void InitPargapmpi( int * argc_ptr, char *** argv_ptr )
   */
   for ( tmp = cmd; *tmp !='\0'; tmp++ )
     if ( *tmp == '/' ) cmd = tmp + 1;
-  if ( 0 != SyStrcmp( "pargapmpi", cmd ) ) return;
+  if ( 0 != strcmp( "pargapmpi", cmd ) ) return;
 
   if ( 0 != MPI_Init( argc_ptr, argv_ptr ) ) {
     fputs("ParGAP:  panic:  couldn't initialize MPI.\n", stderr);
