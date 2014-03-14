@@ -5,13 +5,9 @@
 ##
 ##  Master Slave definitions.
 ##
-#H  @(#)$Id$
-##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
-Revision.pargap_masslave_g :=
-    "@(#)$Id$";
 
 # Provides:  MasterSlave(), IsUpToDate(), ParTrace (default value is true),
 #            ParInstallTOPCGlobalFunction(),

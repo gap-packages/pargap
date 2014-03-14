@@ -4,8 +4,6 @@
 #W  make_doc        make ParGAP package documentation       Gene Cooperman
 #W                                                             Greg Gamble
 ##
-#H  $Id$
-##
 ##  This shell script uses TeX, BibTeX and MakeIndex (via doc/manualindex) 
 ##  to build the .dvi, PostScript, PDF and HTML  (provided  you  have  tth 
 ##  and etc/convert.pl) documentation for the ParGAP Package.

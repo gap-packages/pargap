@@ -5,13 +5,9 @@
 ##
 ##  Slave Listener definitions.
 ##
-#H  @(#)$Id$
-##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
-Revision.pargap_slavelist_g :=
-    "@(#)$Id$";
 
 #Requires:  streams.c:LastReadValue
 

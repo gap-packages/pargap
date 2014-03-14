@@ -3,8 +3,6 @@
 #W  init.g                     ParGAP Package                  Gene Cooperman
 #W                                                                Greg Gamble
 ##
-#H  @(#)$Id$
-##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##

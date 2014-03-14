@@ -3,8 +3,6 @@
 ##
 #W  read.g                  ParGAP Package                    Gene Cooperman
 ##
-#H  @(#)$Id$
-##
 #Y  Copyright (C) 1999-2001  Gene Cooperman
 #Y    See included file, COPYING, for conditions for copying
 ##
