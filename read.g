@@ -8,8 +8,8 @@
 ##
 
 #if not IsBound( MasterSlave ) then
-  ReadPkg("pargap","lib/slavelist.g");
-  ReadPkg("pargap","lib/masslave.g");
+  ReadPackage("pargap","lib/slavelist.g");
+  ReadPackage("pargap","lib/masslave.g");
 #fi;
 
 # PAR_GAP_SLAVE_START is invoked at end of GAP's lib/init.g
