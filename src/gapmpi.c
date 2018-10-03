@@ -131,14 +131,13 @@ Obj UNIX_Getpid( Obj self )
 
 Obj UNIX_Hostname( Obj self )
 { char buf[100];
-  Obj host;
   int res;
   res = gethostname( buf, 100 );
   if (res == -1) {
     perror("UNIX_Hostname: ");
-    sprintf( buf, "<unknown name>"); }
-  C_NEW_STRING( host, strlen(buf), buf );
-  return host;
+    sprintf( buf, "<unknown name>");
+  }
+  return MakeString( buf );
 }
 
 Obj UNIX_Realtime( Obj self ) /* Time since beginning in seconds */
