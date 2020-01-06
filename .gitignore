@@ -1,6 +1,10 @@
 /autom4te.cache/
 /configure
 /config.log
+/config.status
+/Makefile
+
+/bin/procgroup
 /doc/manual.aux
 /doc/manual.bbl
 /doc/manual.blg
