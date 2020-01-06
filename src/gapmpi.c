@@ -13,45 +13,19 @@
 
 /***** core GAP includes *****/
 
-#include        <assert.h>              /* assert                          */
-#include        <time.h>                /* time                            */
-#include	<stdlib.h>		/* exit				   */
-#include	<stdio.h>		/* NULL, fprintf		   */
-#include        "system.h"              /* system dependent part           */
+#include        "gap_all.h"
 
-#include        "gasman.h"              /* garbage collector               */
-#include        "objects.h"             /* objects                         */
-#include        "scanner.h"             /* scanner                         */
-
-#include        "gap.h"                 /* error handling, initialisation  */
-#include        "read.h"                /* reader                          */
-#include        "calls.h"               /* generic call mechanism          */
-#include        "gvars.h"               /* global variables                */
-
-#include        "bool.h"                /* booleans                        */
-
-#include        "records.h"             /* generic records                 */
-#include        "precord.h"             /* plain records                   */
-
-#include        "lists.h"               /* generic lists                   */
-#include        "plist.h"               /* plain lists                     */
-#include        "string.h"              /* strings                         */
-
-#include        "sysfiles.h"            /* file input/output               */
-
-#include        "code.h"                /* coder                           */
-#include        "vars.h"                /* variables                       */
-#include        "stats.h"               /* statements (XXX_BRK_CURR_STAT)  */
-
-# include       "gapmpi.h"               /* MPI functions and UNIX utils   */
+#include       "gapmpi.h"               /* MPI functions and UNIX utils   */
 #include        <mpi.h>                  /* provided with MPI distribution */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 
 /*====================================================================
  * Internal UNIX utilities
