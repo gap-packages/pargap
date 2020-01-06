@@ -322,7 +322,7 @@ MPI_Datatype MPIdatatype_infer(Obj object)
 /* Macro to do standard argument checking for C implementation of GAP fnc */
 #define MPIARGCHK( min, max, error ) \
     if ( ! IS_LIST(args) || LEN_LIST(args) > max || LEN_LIST(args) < min ) { \
-      ErrorQuit( "usage:  " #error, 0L, 0L ); return 0; }
+      ErrorQuit( "usage:  " error, 0L, 0L ); return 0; }
 
 Obj MPIinit( Obj self )
 { int MPIargc;
@@ -424,7 +424,7 @@ Obj MPIabort( Obj self, Obj errorcode )
 
 Obj MPIsend( Obj self, Obj args )
 { Obj buf, dest, tag;
-  MPIARGCHK(2, 3, MPI_Send( <string buf>, <int dest>[, <opt int tag = 0> ] ));
+  MPIARGCHK(2, 3, "MPI_Send( <string buf>, <int dest>[, <opt int tag = 0> ] )");
   buf = ELM_LIST( args, 1 );
   dest = ELM_LIST( args, 2 );
   tag = ( LEN_LIST(args) > 2 ? ELM_LIST( args, 3 ) : 0 );
@@ -438,7 +438,7 @@ Obj MPIsend( Obj self, Obj args )
 
 Obj MPIrecv( Obj self, Obj args )
 { volatile Obj buf, source, tag; /* volatile to satisfy gcc compiler */
-  MPIARGCHK( 1, 3, MPI_Recv( <string buf>, <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] ) );
+  MPIARGCHK( 1, 3, "MPI_Recv( <string buf>, <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] )" );
   buf = ELM_LIST( args, 1 );
   source = ( LEN_LIST(args) > 1 ? ELM_LIST( args, 2 ) :
 	     INTOBJ_INT(MPI_ANY_SOURCE) );
@@ -469,7 +469,7 @@ Obj MPIrecv( Obj self, Obj args )
 
 Obj MPIprobe( Obj self, Obj args )
 { volatile Obj source, tag; /* volatile to satisfy gcc compiler */
-  MPIARGCHK( 0, 2, MPI_Probe( <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] ) );
+  MPIARGCHK( 0, 2, "MPI_Probe( <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] )" );
   source = ( LEN_LIST(args) > 0 ? ELM_LIST( args, 1 ) :
 	     INTOBJ_INT(MPI_ANY_SOURCE) );
   tag = ( LEN_LIST(args) > 1 ? ELM_LIST( args, 2 ) :
@@ -483,7 +483,7 @@ Obj MPIprobe( Obj self, Obj args )
 Obj MPIiprobe( Obj self, Obj args )
 { int flag;
   volatile Obj source, tag; /* volatile to satisfy gcc compiler */
-  MPIARGCHK( 0, 2, MPI_Iprobe( <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] ) );
+  MPIARGCHK( 0, 2, "MPI_Iprobe( <opt int source = MPI_ANY_SOURCE>[, <opt int tag = MPI_ANY_TAG> ] )" );
   source = ( LEN_LIST(args) > 0 ? ELM_LIST( args, 1 ) :
 	     INTOBJ_INT(MPI_ANY_SOURCE) );
   tag = ( LEN_LIST(args) > 1 ? ELM_LIST( args, 2 ) :
