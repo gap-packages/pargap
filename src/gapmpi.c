@@ -401,10 +401,8 @@ Obj MPIget_processor_name( Obj self )
   str = NEW_STRING( 1024 );
   MPI_Get_processor_name( (char*)CSTR_STRING(str), &resultlen);
   ((char*)CSTR_STRING(str))[resultlen] = '\0';
-#ifndef PRE_GAP_4_3
   SET_LEN_STRING(str, resultlen);
   ResizeBag( str, SIZEBAG_STRINGLEN( GET_LEN_STRING(str) ) );
-#endif
   return str;
 }
 
