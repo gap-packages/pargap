@@ -45,10 +45,11 @@
 
 # include       "gapmpi.h"               /* MPI functions and UNIX utils   */
 #include        <mpi.h>                  /* provided with MPI distribution */
-#ifndef SYS_UNISTD_H                     /* definition of 'chdir'          */
-# include <unistd.h>
-# define SYS_UNISTD_H
-#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
