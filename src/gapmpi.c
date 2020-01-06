@@ -430,8 +430,8 @@ Obj MPIsend( Obj self, Obj args )
   dest = ELM_LIST( args, 2 );
   tag = ( LEN_LIST(args) > 2 ? ELM_LIST( args, 3 ) : 0 );
   ConvString( buf );
-  MPI_Send( ((char*)CSTR_STRING(buf)),
-	    strlen((const Char*)CSTR_STRING(buf)), /* don't incl. \0 */
+  MPI_Send( CSTR_STRING(buf),
+	    strlen(CSTR_STRING(buf)), /* don't incl. \0 */
 	    MPIdatatype_infer(buf), INT_INTOBJ(dest), INT_INTOBJ(tag),
 	    MPI_COMM_WORLD);
   return 0;
