@@ -128,7 +128,6 @@ else
   GAPPATH_LIST="../.."
 fi
 
-GAPINI="gap.ini"
 SYSINFO="sysinfo.gap"
 SRC_GAPC="src/gap.c"
 
@@ -137,17 +136,6 @@ for GAPPATH in ${GAPPATH_LIST}
 do
   # Convert the path to absolute
   GAPPATH=`cd $GAPPATH > /dev/null 2>&1 && pwd`
-
-  # check for sysinfo.in (which should be there whether GAP is built or not)
-  # (and which needs to be there to reconfigure GAP)
-  AC_MSG_CHECKING([for GAP root directory])
-  if test -e ${GAPPATH}/${GAPINI}; then
-    AC_MSG_RESULT([${GAPPATH}])
-    have_gapini=yes
-  else
-    AC_MSG_RESULT([Not found])
-    break;
-  fi
 
   # check for sysinfo.gap (to see whether GAP has been built before)
   AC_MSG_CHECKING([for GAP sysinfo.gap])
@@ -170,19 +158,6 @@ do
   fi
 done
 
-if test "x$have_gapini" = "x"; then
-  echo ""
-  echo "  ERROR:  Unable to find the GAP_ROOT directory."
-  echo ""
-  echo "  We need to build a modified version of GAP, so need to know where"
-  echo "  to find your GAP installation."
-  echo ""
-  echo "  Please use the --with-gap= configure option to specify the location"
-  echo "  the GAP_ROOT directory."
-  
-  AC_MSG_ERROR([Unable to find GAP root directory])
-fi
-
 if test "x$have_sysinfo" = "x"; then
   if test "x$configure_gap" = "xtrue"; then
     need_gap_configure=true
@@ -204,22 +179,23 @@ if test "x$have_sysinfo" = "x"; then
   fi;
 fi
 
-if test "x$have_gapsrc" = "x"; then
-  echo ""
-  echo "  ERROR:  Unable to find GAP source files in the directory GAP_ROOT/src."
-  echo ""
-  echo "  We need to build a modified version of GAP, and so need the GAP source"
-  echo "  files. Please check your GAP installation."
-
-  AC_MSG_ERROR([Unable to find GAP source files])
-fi
+# if test "x$have_gapsrc" = "x"; then
+#   echo ""
+#   echo "  ERROR:  Unable to find GAP source files in the directory GAP_ROOT/src."
+#   echo ""
+#   echo "  We need to build a modified version of GAP, and so need the GAP source"
+#   echo "  files. Please check your GAP installation."
+# 
+#   AC_MSG_ERROR([Unable to find GAP source files])
+# fi
 
 # Now find the architecture (if we have a sysinfo.gap)
 if test "x$have_sysinfo" = "xyes"; then
   GAPARCH="Unknown"
 
   AC_MSG_CHECKING([for GAP architecture])
-  GAPARCH=`${GREP} GAParch= ${GAPPATH}/${SYSINFO} | ${SED} 's|^GAParch=\(.*\)|\1|'`
+  source ${GAPPATH}/${SYSINFO}
+  GAPARCH=$GAParch
   AC_MSG_RESULT([${GAPARCH}])
 
   if test "x$GAPARCH" = "xUnknown"; then
@@ -235,7 +211,7 @@ if test "x$have_sysinfo" = "xyes"; then
   if test "x$MPICC" != "x"; then
     AC_MSG_CHECKING([whether GAP compiler is set to $MPICC])
 
-    val=$(expr "$GAPARCH" : ".*-$MPICC")
+    val=$(expr "$GAP_CC" : "$MPICC .*")
     if test "x$val" != "x0"; then
       gap_with_mpicc=true 
       AC_MSG_RESULT([yes])
