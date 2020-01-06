@@ -13,10 +13,11 @@
 
 /***** core GAP includes *****/
 
-#include        "gap_all.h"
+#include "gap_all.h"
+#include "sysopt.h"
 
-#include       "gapmpi.h"               /* MPI functions and UNIX utils   */
-#include        <mpi.h>                  /* provided with MPI distribution */
+#include "gapmpi.h"               /* MPI functions and UNIX utils   */
+#include  <mpi.h>                  /* provided with MPI distribution */
 
 #include <assert.h>
 #include <stdio.h>
@@ -150,7 +151,7 @@ Obj UNIX_LimitRss( Obj size ) /* size in units of bytes */
  *   Then wait for next statement dispatch:
  *  stats.c:ExecIntrStat()
  *    -> [restore dispatch table, sysfiles.c:SyIsIntr();
- *       SET_BRK_CURR_STAT(stat); ErrorReturnVoid(); return EXEC_STAT(stat) ]
+ *       ErrorReturnVoid(); return EXEC_STAT(stat) ]
  *  ErrorReturnVoid() -> gap.c:ErrorMode() -> ReadEvalError() ->
  *          longjmp(ReadJmpError)
  * if (UserHasQUIT)
@@ -161,7 +162,7 @@ Obj UNIX_LimitRss( Obj size ) /* size in units of bytes */
  *   -> if ( ! BreakOnError ) ReadEvalError();
  * [ Note:  BreakOnError is set to 0 on all slaves ]
  *
- * If syAnswerIntr() throws to READ_ERROR() inside MPI_READ_ERROR()
+ * If syAnswerIntr() throws to TRY_IF_NO_ERROR()
  * we'll reach MPI_READ_DONE() and restore the previous signal.
  */
 
@@ -180,14 +181,16 @@ SYS_SIG_T syAnswerIntr ( int                 signr );
 
 static SYS_SIG_T               (*savedSignal)(int);
 static jmp_buf                 readJmpError; /* TOP level => non-reentrant */
-#define MPI_READ_ERROR() \
-          ( memcpy( readJmpError, ReadJmpError, sizeof(jmp_buf) ), \
-            savedSignal = signal( SIGINT, &ParGAPAnswerIntr), \
-            READ_ERROR() \
-          )
+#define MPI_READ_INIT() \
+          do { \
+              memcpy( readJmpError, STATE(ReadJmpError), sizeof(jmp_buf) ); \
+              savedSignal = signal( SIGINT, &ParGAPAnswerIntr); \
+          } while(0)
 #define MPI_READ_DONE() \
+        do { \
             signal( SIGINT, savedSignal ); \
-	    memcpy( ReadJmpError, readJmpError, sizeof(jmp_buf) )
+	        memcpy( STATE(ReadJmpError), readJmpError, sizeof(jmp_buf) ); \
+	    } while(0)
 
 SYS_SIG_T ParGAPAnswerIntr( int signr ) {
   Obj MPIcomm_rank( Obj self );
@@ -207,15 +210,15 @@ SYS_SIG_T ParGAPAnswerIntr( int signr ) {
 	 INT_INTOBJ(MPIcomm_rank( (Obj)0 )), signr );
 #endif
   }
-  /* This signal() is needed if we're not throwing to MPI_READ_ERROR() */
+  /* This signal() is needed if we're not throwing to TRY_IF_NO_ERROR() */
   signal( SIGINT, ParGAPAnswerIntr );
-  /* ReadEvalError() will throw to MPI_READ_ERROR() if this was called
-      after MPI_READ_ERROR() in gapmpi.c;  (It should have been.)
+  /* ReadEvalError() will throw to TRY_IF_NO_ERROR() if this was called
+      after TRY_IF_NO_ERROR() in gapmpi.c;  (It should have been.)
      In MPINU on slave, we simply exit select(), discover EINTR, and
       return to select().  (We don't yet longjmp() to the recv-eval-send
       loop on slave.)
   */
-    ReadEvalError(); /* throw to MPI_READ_ERROR() */
+    ReadEvalError(); /* throw to TRY_IF_NO_ERROR() */
   /*NOTREACHED*/
 #if defined(SYS_HAS_SIG_T) && ! HAVE_SIGNAL_VOID
   return 0;                           /* is ignored                      */
@@ -234,26 +237,24 @@ SYS_SIG_T ParGAPAnswerIntr( int signr ) {
 */
 Obj UNIX_Catch( Obj self, Obj fnc, Obj arg2 )
 { Obj result; /* gcc -Wall complains if result is initialized to Fail here */
-  Bag currLVars = CurrLVars;
+  Bag currLVars = STATE(CurrLVars);
   jmp_buf readJmpError;
   SYS_SIG_T (*savedSignal)(int);
-  OLD_BRK_CURR_STAT                   /* old executing statement         */
-
-  REM_BRK_CURR_STAT();
 
   result = Fail;
-  if ( ! MPI_READ_ERROR() )
-    result = FuncCALL_FUNC_LIST( 0L, fnc, arg2 );
-  else {
-    while ( CurrLVars != currLVars && CurrLVars != BottomLVars )
-      SWITCH_TO_OLD_LVARS( BRK_CALL_FROM() );
-    assert( CurrLVars == currLVars );
+  MPI_READ_INIT();
+  TRY_IF_NO_ERROR {
+    result = CallFuncList(fnc, arg2);
+  }
+  CATCH_ERROR {
+    while ( STATE(CurrLVars) != currLVars && STATE(CurrLVars) != STATE(BottomLVars) )
+      SWITCH_TO_OLD_LVARS( PARENT_LVARS(STATE(CurrLVars)) );
+    assert( STATE(CurrLVars) == currLVars );
     ClearError();
     SyIsIntr(); /* clear the interrupt, too */
   }
   MPI_READ_DONE();
 
-  RES_BRK_CURR_STAT();
   return result;
 }
 
@@ -423,10 +424,12 @@ Obj MPIrecv( Obj self, Obj args )
   ConvString( buf );
   /* Note GET_LEN_STRING() returns GAP string length
 	 and strlen(CSTR_STRING()) returns C string length (up to '\0') */
-  if ( ! MPI_READ_ERROR() )
+  MPI_READ_INIT();
+  TRY_IF_NO_ERROR {
     MPI_Recv( CSTR_STRING(buf), GET_LEN_STRING(buf),
 	     last_datatype=MPIdatatype_infer(buf),
              INT_INTOBJ(source), INT_INTOBJ(tag), MPI_COMM_WORLD, &last_status);
+  }
   MPI_READ_DONE();
   if ( ! IS_STRING( buf ) )
   { /* CLEAN THIS UP LATER */
@@ -448,8 +451,10 @@ Obj MPIprobe( Obj self, Obj args )
 	     INTOBJ_INT(MPI_ANY_SOURCE) );
   tag = ( LEN_LIST(args) > 1 ? ELM_LIST( args, 2 ) :
 	  INTOBJ_INT(MPI_ANY_TAG) );
-  if ( ! MPI_READ_ERROR() )
-   MPI_Probe(INT_INTOBJ(source), INT_INTOBJ(tag), MPI_COMM_WORLD, &last_status);
+  MPI_READ_INIT();
+  TRY_IF_NO_ERROR {
+    MPI_Probe(INT_INTOBJ(source), INT_INTOBJ(tag), MPI_COMM_WORLD, &last_status);
+  }
   MPI_READ_DONE();
   return True;
 }
@@ -462,9 +467,11 @@ Obj MPIiprobe( Obj self, Obj args )
 	     INTOBJ_INT(MPI_ANY_SOURCE) );
   tag = ( LEN_LIST(args) > 1 ? ELM_LIST( args, 2 ) :
 	  INTOBJ_INT(MPI_ANY_TAG) );
-  if ( ! MPI_READ_ERROR() )
+  MPI_READ_INIT();
+  TRY_IF_NO_ERROR {
     MPI_Iprobe(INT_INTOBJ(source), INT_INTOBJ(tag),
 		 MPI_COMM_WORLD, &flag, &last_status);
+  }
   MPI_READ_DONE();
   return (flag ? True : False);
 }
