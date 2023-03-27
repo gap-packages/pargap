@@ -1,4 +1,4 @@
-AC_INIT([pargap], 1.3)
+AC_INIT([pargap], [package])
 AC_CONFIG_SRCDIR([src/gapmpi.c])
 
 AC_LANG_C
@@ -16,7 +16,7 @@ LASTCONFIGUREARGS=$ac_configure_args
 # Can we find a System MPI library?
 
 AC_ARG_WITH(mpi, 
-  [AC_HELP_STRING([--with-mpi=system|MPINU2|MPINU], 
+  [AS_HELP_STRING([--with-mpi=system|MPINU2|MPINU], 
     [Specify the MPI library to use. By default, configure tries to find a 
      working MPI installation on the standard paths. Failing this, it drops 
      back to using the subset MPI implementation included with this package. 
@@ -113,12 +113,12 @@ fi
 
 #Allow the user to specify the location of GAP
 AC_ARG_WITH(gap, 
-  [AC_HELP_STRING([--with-gap=<path>], [specify root of GAP installation])],
+  [AS_HELP_STRING([--with-gap=<path>], [specify root of GAP installation])],
   [GAPPATH=$withval])
 
 #If this is set, we are allowed to run ./configure; make on GAP if necessary
 AC_ARG_WITH(basic-gap-configure, 
-  [AC_HELP_STRING([--with-basic-gap-configure], [run ./configure; make on GAP if neccessary])],
+  [AS_HELP_STRING([--with-basic-gap-configure], [run ./configure; make on GAP if neccessary])],
   [configure_gap=true])
 
 if test -n "$GAPPATH"; then
