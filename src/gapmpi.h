@@ -13,12 +13,12 @@
 *F * * * * * * * * * * * * * initialize package * * * * * * * * * * * * * * *
 */
 
-StructInitInfo * InitInfoPargapmpi ( void );
-void InitPargapmpi (int * argc_ptr, char *** argv_ptr );
+StructInitInfo * InitInfoPargapmpi(void);
+void             InitPargapmpi(int * argc_ptr, char *** argv_ptr);
 
 /* For backward compatibility */
-StructInitInfo * InitInfoGapmpi ( void );
-void InitGapmpi (int * argc_ptr, char *** argv_ptr );
+StructInitInfo * InitInfoGapmpi(void);
+void             InitGapmpi(int * argc_ptr, char *** argv_ptr);
 
 
 /****************************************************************************
