@@ -5,7 +5,6 @@
 
 ##  For the LoadPackage mechanism in GAP >= 4.4 only the entries
 ##  .PackageName, .Version, .PackageDoc, .Dependencies, .AvailabilityTest
-##  .Autoload   are needed. The other entries are relevant if the
 ##  package shall be distributed for other GAP users, in particular if it
 ##  shall be redistributed via the GAP Website.
 
@@ -94,7 +93,6 @@ PackageDoc := rec(
   PDFFile   := "doc/manual.pdf",
   SixFile   := "doc/manual.six",
   LongTitle := "Parallel GAP",
-  Autoload  := true
 ),
 Dependencies := rec(
   GAP := ">=4.7",
@@ -117,7 +115,6 @@ end,
 
 BannerString := "",
 
-Autoload := true,
 #TestFile := "tst/testall.g",
 Keywords := ["Parallel",  "Top-C"]
 ));
